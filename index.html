@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>業務ポータル｜山陽チップ工業株式会社</title>
+<meta name="theme-color" content="#1D9E75">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --green-dark:#0F6E56;--green-main:#1D9E75;--green-light:#e6f4ea;
+  --amber:#EF9F27;--amber-light:#fffbeb;
+  --gray-bg:#f5f6f8;--gray-card:#fff;--gray-border:#e2e4e8;
+  --text-main:#1a1a18;--text-sub:#666660;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.05);
+  --shadow-md:0 4px 12px rgba(0,0,0,.08);
+}
+html,body{height:100%;width:100%;overflow-x:hidden;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--gray-bg);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+
+/* ===== ログイン前オーバーレイ ===== */
+#authOverlay{position:fixed;inset:0;background:linear-gradient(135deg,#0F6E56 0%,#1D9E75 60%,#2bb890 100%);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;}
+#authOverlay .logo{width:64px;height:64px;background:#fff;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:var(--green-main);margin-bottom:20px;}
+#authOverlay h1{color:#fff;font-size:24px;font-weight:900;margin-bottom:6px;}
+#authOverlay .sub{color:rgba(255,255,255,.85);font-size:13px;margin-bottom:36px;}
+#g_id_signin_container{margin-bottom:16px;}
+#authError{color:#ffdcdc;font-size:13px;margin-top:14px;display:none;max-width:340px;line-height:1.7;background:rgba(0,0,0,.15);border-radius:10px;padding:12px 16px;}
+#authRequestLink{color:#fff;font-size:13px;text-decoration:underline;cursor:pointer;margin-top:24px;opacity:.9;}
+#authRequestLink:hover{opacity:1;}
+.auth-card{background:#fff;border-radius:16px;padding:28px 26px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.25);display:none;text-align:left;}
+.auth-card.show{display:block;}
+.auth-card h2{font-size:16px;font-weight:700;margin-bottom:6px;color:var(--text-main);}
+.auth-card .desc{font-size:12px;color:var(--text-sub);margin-bottom:18px;line-height:1.6;}
+.auth-card .field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.auth-card .field label{font-size:12px;font-weight:600;color:var(--text-sub);}
+.auth-card .field input{border:1px solid var(--gray-border);border-radius:8px;padding:10px 12px;font-size:14px;}
+.auth-card .field input[readonly]{background:#f5f6f8;color:#888;}
+.auth-card .actions{display:flex;gap:8px;margin-top:18px;}
+.auth-card .actions button{flex:1;padding:10px;border-radius:8px;border:none;font-size:13px;font-weight:700;cursor:pointer;}
+.auth-card .actions .cancel{background:var(--gray-bg);color:var(--text-sub);}
+.auth-card .actions .submit{background:var(--green-main);color:#fff;}
+.auth-card .actions .submit:hover{background:var(--green-dark);}
+.auth-loading{color:rgba(255,255,255,.85);font-size:13px;}
+
+/* ===== ヘッダー ===== */
+.header{background:#fff;border-bottom:3px solid var(--green-main);padding:0 32px;height:72px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm);}
+.header-left{display:flex;align-items:center;gap:12px;}
+.logo-mark{width:42px;height:42px;background:var(--green-main);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;flex-shrink:0;}
+.company-name{font-size:16px;font-weight:700;line-height:1.2;}
+.company-name span{display:block;font-size:11px;font-weight:500;color:var(--text-sub);letter-spacing:.05em;}
+.header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.user-badge{font-size:14px;color:var(--text-sub);background:var(--gray-bg);padding:6px 14px;border-radius:20px;white-space:nowrap;}
+.rank-badge{font-size:13px;font-weight:700;padding:5px 12px;border-radius:20px;white-space:nowrap;}
+.rank-badge.admin{background:#FEF3C7;color:#854F0B;}
+.rank-badge.manager{background:#e8f3fc;color:#185FA5;}
+.rank-badge.user{background:var(--green-light);color:var(--green-dark);}
+.hd-btn{padding:9px 16px;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .15s;color:#fff;white-space:nowrap;}
+.hd-btn.green{background:var(--green-main);} .hd-btn.green:hover{background:var(--green-dark);}
+.hd-btn.amber{background:var(--amber);}      .hd-btn.amber:hover{background:#b87009;}
+.hd-btn.gray{background:#888;} .hd-btn.gray:hover{background:#666;}
+
+/* ===== ヒーロー ===== */
+.hero{background:linear-gradient(135deg,var(--green-dark) 0%,var(--green-main) 60%,#2bb890 100%);padding:40px 32px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.hero-title{font-size:28px;font-weight:900;color:#fff;margin-bottom:6px;}
+.hero-title span{color:rgba(255,255,255,.75);font-weight:400;font-size:15px;display:block;margin-bottom:4px;}
+.hero-desc{font-size:14px;color:rgba(255,255,255,.85);line-height:1.7;}
+
+/* ===== メイン ===== */
+.main{flex:1;width:100%;max-width:900px;margin:0 auto;padding:32px 24px 80px;}
+.section-label{font-size:13px;font-weight:700;color:var(--text-sub);letter-spacing:.06em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.section-label-left{display:flex;align-items:center;gap:8px;}
+.section-line{flex:1;height:1px;background:var(--gray-border);}
+.admin-mode-bar{background:#FEF3C7;border:1px solid #EF9F27;border-radius:10px;padding:14px 20px;margin-bottom:24px;font-size:14px;color:#854F0B;display:none;align-items:center;justify-content:space-between;gap:10px;}
+.admin-mode-bar.show{display:flex;}
+.admin-add-btn{display:none;padding:7px 14px;border:1px solid var(--green-main);border-radius:7px;font-size:13px;font-weight:700;color:var(--green-main);background:#fff;cursor:pointer;white-space:nowrap;}
+.admin-add-btn:hover{background:var(--green-light);}
+.admin-mode .admin-add-btn{display:inline-flex;align-items:center;gap:3px;}
+.list-container{display:flex;flex-direction:column;gap:10px;margin-bottom:32px;}
+.list-loading{background:var(--gray-card);border:1px solid var(--gray-border);border-radius:14px;padding:24px 22px;display:flex;align-items:center;gap:12px;font-size:13px;color:var(--text-sub);}
+.spinner{width:18px;height:18px;border:2px solid #ddd;border-top-color:var(--green-main);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.list-item{background:var(--gray-card);border:1px solid var(--gray-border);border-radius:14px;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;text-decoration:none;transition:background .15s,border-color .15s;box-shadow:var(--shadow-sm);}
+.list-item:hover:not(.locked){background:#f8fbff;border-color:var(--green-main);}
+.list-item.locked{opacity:.5;pointer-events:none;background:#fafafa;}
+.list-item-left{display:flex;align-items:center;gap:18px;flex:1;min-width:0;}
+.list-icon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;}
+.list-icon.green{background:var(--green-light);}
+.list-icon.amber{background:var(--amber-light);}
+.list-icon.blue{background:#e8f3fc;}
+.list-icon.gray{background:#f4f4f0;}
+.list-icon.red{background:#fce8e6;}
+.list-icon.purple{background:#f3e8ff;}
+.list-text{flex:1;overflow:hidden;}
+.list-title{font-size:16px;font-weight:700;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:8px;}
+.list-desc{font-size:13px;color:var(--text-sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px;}
+.list-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.list-arrow{color:#ccc;font-size:20px;font-weight:700;}
+.admin-mode .list-arrow{display:none;}
+.badge-sm{font-size:11px;font-weight:700;border-radius:4px;padding:3px 8px;white-space:nowrap;}
+.badge-coming{background:#f0f0eb;color:#888;}
+.badge-locked{background:#ddd;color:#666;}
+.list-edit-btns{display:none;gap:6px;}
+.admin-mode .list-edit-btns{display:flex;}
+.list-edit-btn{padding:8px 14px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;white-space:nowrap;}
+.list-edit-btn.edit{background:#e8f3fc;color:#185FA5;}
+.list-edit-btn.edit:hover{background:#378ADD;color:#fff;}
+.list-edit-btn.del{background:#fce8e6;color:#c0392b;}
+.list-edit-btn.del:hover{background:#c0392b;color:#fff;}
+.notice-item{background:#fff;border:1px solid var(--gray-border);border-left:5px solid var(--amber);border-radius:14px;padding:18px 22px;box-shadow:var(--shadow-sm);display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:10px;}
+.notice-content{display:flex;align-items:flex-start;gap:10px;flex:1;min-width:0;}
+.notice-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+.notice-text{font-size:15px;line-height:1.7;word-break:break-word;}
+.notice-edit-btns{display:none;gap:6px;flex-shrink:0;}
+.admin-mode .notice-edit-btns{display:flex;}
+.notice-empty{padding:16px 20px;color:#888;font-size:14px;background:#fff;border:1px dashed var(--gray-border);border-radius:14px;margin-bottom:10px;}
+.notice-loading{padding:16px 20px;color:#888;font-size:14px;display:flex;align-items:center;gap:10px;background:#fff;border:1px dashed var(--gray-border);border-radius:14px;margin-bottom:10px;}
+
+/* ===== モーダル ===== */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;padding:16px;}
+.modal-bg.open{display:flex;}
+.modal{background:#fff;border-radius:16px;width:100%;max-width:480px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.modal-header{padding:18px 20px;border-bottom:1px solid var(--gray-border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.modal-header h2{font-size:15px;font-weight:700;}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:#888;padding:2px 7px;border-radius:6px;line-height:1;}
+.modal-close:hover{background:var(--gray-bg);}
+.modal-body{padding:20px;overflow-y:auto;flex:1;}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--gray-border);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0;}
+.modal-footer.between{justify-content:space-between;}
+.form-field{display:flex;flex-direction:column;gap:5px;margin-bottom:13px;}
+.form-field label{font-size:12px;font-weight:600;color:var(--text-sub);}
+.form-field input,.form-field select,.form-field textarea{border:1px solid var(--gray-border);border-radius:8px;padding:9px 11px;font-size:13px;color:var(--text-main);background:#fff;width:100%;font-family:inherit;}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{outline:none;border-color:var(--green-main);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.btn{padding:9px 17px;border:1px solid var(--gray-border);border-radius:8px;background:#fff;font-size:13px;cursor:pointer;font-weight:600;}
+.btn:hover{background:var(--gray-bg);}
+.btn-green{border:none;background:var(--green-main);color:#fff;} .btn-green:hover{background:var(--green-dark);}
+.btn-red{border:none;background:#fce8e6;color:#c0392b;border:1px solid #f5c6cb;} .btn-red:hover{background:#c0392b;color:#fff;}
+.modal-lg{max-width:640px;}
+.add-form{background:var(--gray-bg);border-radius:10px;padding:14px;margin-bottom:20px;display:grid;grid-template-columns:1fr 100px 120px 120px auto;gap:8px;align-items:end;}
+.add-form .field{display:flex;flex-direction:column;gap:4px;}
+.add-form label{font-size:11px;font-weight:600;color:var(--text-sub);}
+.add-form input,.add-form select{border:1px solid var(--gray-border);border-radius:7px;padding:8px 10px;font-size:13px;color:var(--text-main);background:#fff;width:100%;}
+.add-form input:focus,.add-form select:focus{outline:none;border-color:var(--green-main);}
+.user-table{width:100%;border-collapse:collapse;font-size:13px;}
+.user-table th{font-size:11px;font-weight:700;color:var(--text-sub);padding:8px 10px;text-align:left;border-bottom:2px solid var(--gray-border);background:var(--gray-bg);}
+.user-table td{padding:9px 10px;border-bottom:1px solid var(--gray-border);vertical-align:middle;}
+.user-table tr:last-child td{border-bottom:none;}
+.user-table tr:hover td{background:#f8fbff;}
+.rank-sel{border:1px solid var(--gray-border);border-radius:5px;padding:4px 8px;font-size:12px;background:#fff;cursor:pointer;}
+.rank-sel:focus{outline:none;border-color:var(--green-main);}
+.btn-sm{padding:6px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:none;color:#fff;}
+.btn-sm-del{background:none;border:1px solid #f5c6cb;border-radius:5px;padding:4px 10px;font-size:12px;color:#c0392b;cursor:pointer;}
+.btn-sm-del:hover{background:#fce8e6;}
+.empty-msg{text-align:center;color:var(--text-sub);padding:24px;font-size:13px;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:10px 22px;border-radius:8px;font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,.14);opacity:0;transition:opacity .3s;pointer-events:none;z-index:9999;white-space:nowrap;}
+.toast.show{opacity:1;}
+.toast.success{background:#1a6b2e;color:#fff;}
+.toast.error{background:#9b2a1e;color:#fff;}
+.toast.info{background:#185FA5;color:#fff;}
+.footer{background:#fff;border-top:1px solid var(--gray-border);padding:16px 32px;font-size:13px;color:var(--text-sub);text-align:center;}
+
+@media(max-width:600px){
+  .header{padding:0 12px;height:auto;min-height:64px;flex-wrap:wrap;gap:8px;padding-top:8px;padding-bottom:8px;}
+  .header-right{justify-content:flex-end;width:100%;}
+  .main{padding:16px 10px 60px;}
+  .add-form{grid-template-columns:1fr !important;gap:10px;}
+  .form-row{grid-template-columns:1fr;}
+  .company-name span{display:none;}
+  .modal-lg{max-width:100vw;margin:4px;}
+  .user-table{font-size:12px;}
+  .user-table th,.user-table td{padding:6px 5px;}
+  .hd-btn,.btn,.list-edit-btn{min-height:44px;min-width:44px;font-size:14px;}
+  .rank-sel{min-height:36px;font-size:13px;}
+  .btn-sm-del{min-height:36px;font-size:13px;padding:6px 12px;}
+  .list-item{padding:14px 16px;}
+  .list-icon{width:48px;height:48px;font-size:24px;}
+  .list-title{font-size:15px;}
+  .notice-text{font-size:14px;}
+}
+@media(max-width:400px){
+  .header-left{gap:8px;}
+  .logo-mark{width:36px;height:36px;font-size:18px;border-radius:8px;}
+  .company-name{font-size:14px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ ログイン前オーバーレイ ============ -->
+<div id="authOverlay">
+  <div id="authLoginView">
+    <div class="logo">山</div>
+    <h1>業務ポータル</h1>
+    <div class="sub">山陽チップ工業株式会社</div>
+    <div id="g_id_signin_container"></div>
+    <div id="authError"></div>
+    <div id="authRequestLink" onclick="showRequestCard()">アカウントをお持ちでない方はこちら（利用申請）</div>
+  </div>
+
+  <div class="auth-card" id="requestCard">
+    <h2>📝 利用申請</h2>
+    <div class="desc">Googleアカウントでログイン済みの状態で申請してください。管理者が確認のうえ、登録します。</div>
+    <div class="field">
+      <label>メールアドレス</label>
+      <input type="email" id="reqEmail" readonly>
+    </div>
+    <div class="field">
+      <label>お名前</label>
+      <input type="text" id="reqName" placeholder="山田 太郎">
+    </div>
+    <div class="actions">
+      <button class="cancel" onclick="hideRequestCard()">戻る</button>
+      <button class="submit" onclick="submitRequest()">申請する</button>
+    </div>
+  </div>
+</div>
+
+<div class="app-body" id="appBody" style="display:none;">
+
+<header class="header">
+  <div class="header-left">
+    <div class="logo-mark">山</div>
+    <div class="company-name">山陽チップ工業株式会社<span>SANYO CHIP KOGYO CO., LTD.</span></div>
+  </div>
+  <div class="header-right">
+    <span class="user-badge" id="userBadge"></span>
+    <span class="rank-badge" id="rankBadge"></span>
+    <span id="adminBtns" style="display:none;gap:8px;align-items:center;">
+      <button class="hd-btn amber" id="adminModeBtn" onclick="toggleAdminMode()">⚙ 管理モード</button>
+      <button class="hd-btn green" onclick="openUserModal()">👥 ユーザー管理</button>
+      <button class="hd-btn amber" onclick="openRequestModal()" style="position:relative;">
+        📝 ユーザー申請
+        <span id="reqBadge" style="display:none;position:absolute;top:-6px;right:-6px;background:#c0392b;color:#fff;font-size:11px;font-weight:800;border-radius:10px;padding:2px 6px;min-width:18px;text-align:center;"></span>
+      </button>
+    </span>
+    <button class="hd-btn gray" onclick="doLogout()">ログアウト</button>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-title"><span>Business Portal</span>業務ポータル</div>
+    <div class="hero-desc">社内業務システムへのアクセスはこちらから。使用するシステムを選択してください。</div>
+  </div>
+</div>
+
+<main class="main">
+  <div class="admin-mode-bar" id="adminModeBar">
+    <span>⚙ 管理モード：お知らせ・システムの追加・編集・削除ができます</span>
+    <button class="hd-btn" style="background:#888;" onclick="toggleAdminMode()">✕ 終了</button>
+  </div>
+
+  <div class="section-label">
+    <div class="section-label-left">お知らせ <div class="section-line"></div></div>
+    <button class="admin-add-btn" onclick="openNoticeModal(null)">＋ 追加</button>
+  </div>
+  <div id="noticeDisplay" style="margin-bottom:28px;"></div>
+
+  <div class="section-label">
+    <div class="section-label-left">社内システム一覧 <div class="section-line"></div></div>
+    <button class="admin-add-btn" onclick="openCardEditModal(null)">＋ 追加</button>
+  </div>
+  <div class="list-container" id="listGrid"></div>
+</main>
+
+<!-- システム追加・編集モーダル -->
+<div class="modal-bg" id="cardEditModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="cardEditTitle">＋ システムを追加</h2>
+      <button class="modal-close" onclick="closeModal('cardEditModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-field"><label>アイコン</label><input type="text" id="ce_icon" placeholder="📋" maxlength="2" style="font-size:20px;text-align:center;"></div>
+        <div class="form-field"><label>アイコン色</label>
+          <select id="ce_color">
+            <option value="green">緑</option><option value="blue">青</option>
+            <option value="amber">オレンジ</option><option value="gray">グレー</option>
+            <option value="red">赤</option><option value="purple">紫</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-field"><label>タイトル *</label><input type="text" id="ce_title" placeholder="システム名"></div>
+      <div class="form-field"><label>URL</label><input type="text" id="ce_url" placeholder="https://..."></div>
+      <div class="form-field"><label>説明</label><textarea id="ce_desc" rows="2" placeholder="システムの説明"></textarea></div>
+      <div class="form-field"><label>アクセス権限</label>
+        <select id="ce_rank">
+          <option value="admin,manager,user">全員（全ランク）</option>
+          <option value="admin,manager">管理者＋中間のみ</option>
+          <option value="admin">管理者のみ</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('cardEditModal')">キャンセル</button>
+      <button class="btn btn-green" onclick="saveCard()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- お知らせ追加・編集モーダル -->
+<div class="modal-bg" id="noticeModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="noticeModalTitle">＋ お知らせを追加</h2>
+      <button class="modal-close" onclick="closeModal('noticeModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-field"><label>アイコン</label><input type="text" id="nm_icon" placeholder="📌" maxlength="2" style="font-size:20px;text-align:center;"></div>
+        <div class="form-field"><label>文字の色</label>
+          <select id="nm_color">
+            <option value="default">黒（標準）</option><option value="red">赤</option>
+            <option value="blue">青</option><option value="green">緑</option><option value="amber">オレンジ</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field"><label>文字の大きさ</label>
+          <select id="nm_size">
+            <option value="xs">極小</option><option value="sm">小</option>
+            <option value="md" selected>標準</option><option value="lg">大</option><option value="xl">特大</option>
+          </select>
+        </div>
+        <div class="form-field"><label>URLリンク（任意）</label><input type="text" id="nm_url" placeholder="https://..."></div>
+      </div>
+      <div class="form-field"><label>お知らせ内容 *</label><textarea id="nm_text" rows="4" placeholder="お知らせ内容を入力してください"></textarea></div>
+    </div>
+    <div class="modal-footer between">
+      <button class="btn btn-red" id="noticeDeleteBtn" style="display:none;" onclick="deleteNoticeFromModal()">削除</button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn" onclick="closeModal('noticeModal')">キャンセル</button>
+        <button class="btn btn-green" onclick="saveNotice()">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ユーザー管理モーダル -->
+<div class="modal-bg" id="userModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h2>👥 ユーザー管理</h2>
+      <button class="modal-close" onclick="closeModal('userModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="add-form">
+        <div class="field"><label>メールアドレス</label><input type="email" id="newEmail" placeholder="example@gmail.com"></div>
+        <div class="field"><label>名前</label><input type="text" id="newName" placeholder="山田 太郎"></div>
+        <div class="field"><label>ランク</label>
+          <select id="newRank">
+            <option value="user">一般</option><option value="manager">中間</option><option value="admin">管理者</option>
+          </select>
+        </div>
+        <div class="field"><label>アクセス</label>
+          <select id="newAccess">
+            <option value="portal,estimate">両方</option>
+            <option value="portal">ポータルのみ</option>
+            <option value="estimate">見積書のみ</option>
+          </select>
+        </div>
+        <button class="btn btn-green" onclick="addUser()" style="align-self:end;padding:8px 14px;">＋</button>
+      </div>
+      <div id="userTableWrap"><div class="empty-msg">読み込み中...</div></div>
+    </div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal('userModal')">閉じる</button></div>
+  </div>
+</div>
+
+<!-- ユーザー登録申請モーダル -->
+<div class="modal-bg" id="requestModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h2>📝 ユーザー登録申請</h2>
+      <button class="modal-close" onclick="closeModal('requestModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:#f8f8f6;border-radius:10px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <label style="font-size:13px;font-weight:600;color:#555;">通知先メールアドレス</label>
+        <input type="email" id="notifyEmailInput" placeholder="example@gmail.com" style="flex:1;min-width:200px;border:1px solid #ddd;border-radius:7px;padding:7px 10px;font-size:13px;">
+        <button class="btn btn-green" style="padding:7px 14px;" onclick="saveNotifyEmail()">保存</button>
+      </div>
+      <div id="requestTableWrap"><div class="empty-msg">読み込み中...</div></div>
+    </div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal('requestModal')">閉じる</button></div>
+  </div>
+</div>
+
+<!-- 承認時の権限選択モーダル -->
+<div class="modal-bg" id="approveModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>✅ 申請を承認</h2>
+      <button class="modal-close" onclick="closeModal('approveModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-field">
+        <label id="approveTargetLabel" style="font-weight:700;font-size:14px;color:#1a1a18;"></label>
+      </div>
+      <div class="form-field">
+        <label>ランク</label>
+        <select id="approveRank">
+          <option value="user">一般</option>
+          <option value="manager">中間</option>
+          <option value="admin">管理者</option>
+          <option value="viewer">閲覧専用</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>アクセス権限</label>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">
+            <input type="checkbox" id="accessPortal" checked style="width:16px;height:16px;"> 業務ポータル
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">
+            <input type="checkbox" id="accessEstimate" style="width:16px;height:16px;"> 見積書システム
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">
+            <input type="checkbox" id="accessJuki" style="width:16px;height:16px;"> 重機日報
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('approveModal')">キャンセル</button>
+      <button class="btn btn-green" onclick="confirmApprove()">この内容で承認する</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+<footer class="footer">&copy; 山陽チップ工業株式会社 — 社内業務ポータル</footer>
+
+</div>
+<!-- /appBody -->
+
+<script>
+// ============================================================
+//  CONFIG
+// ============================================================
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyCko53kzXg1MWp2fGA9diCheQsLKrU5vFf0FwJh9cnG7O1GjibB8Ym5bHkPzVQfhHR/exec';
+const GOOGLE_CLIENT_ID = '701718869898-mqj947fmfu2ej0lkgfhkfb9fnssrh6gb.apps.googleusercontent.com';
+
+var CURRENT_USER = null;
+var _lastIdToken = null;
+
+// ============================================================
+//  GAS通信（重機日報と同じ XMLHttpRequest 方式。CORS/リダイレクト問題を回避）
+// ============================================================
+function postToGas(payload, timeoutMs){
+  return new Promise((resolve, reject)=>{
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', GAS_URL, true);
+    if(timeoutMs) xhr.timeout = timeoutMs;
+    xhr.onload = function(){
+      if(xhr.status >= 200 && xhr.status < 300){
+        try{ resolve(JSON.parse(xhr.responseText)); }
+        catch(e){ reject(new Error('レスポンスの解析に失敗しました')); }
+      }else{
+        reject(new Error('サーバーエラー (status: '+xhr.status+')'));
+      }
+    };
+    xhr.onerror = function(){ reject(new Error('通信に失敗しました')); };
+    xhr.ontimeout = function(){ reject(new Error('タイムアウトしました')); };
+    xhr.send(JSON.stringify(payload));
+  });
+}
+
+function getDeviceToken(){ return localStorage.getItem('portalDeviceToken') || ''; }
+function setDeviceToken(t){ localStorage.setItem('portalDeviceToken', t); }
+function clearDeviceToken(){ localStorage.removeItem('portalDeviceToken'); }
+
+async function portalApi(action, params){
+  const payload = Object.assign({action:action, deviceToken:getDeviceToken()}, params||{});
+  const data = await postToGas(payload);
+  if(data && (data.status==='error') && /認証|ログイン/.test(data.message||'')){
+    clearDeviceToken();
+    showLoginView('セッションの有効期限が切れました。再度ログインしてください。');
+  }
+  return data;
+}
+
+// ============================================================
+//  認証：Google Sign-In
+// ============================================================
+function initGoogleSignIn(){
+  if(window.google && google.accounts && google.accounts.id){
+    google.accounts.id.initialize({client_id: GOOGLE_CLIENT_ID, callback: onGoogleSignIn});
+    google.accounts.id.renderButton(document.getElementById('g_id_signin_container'), {theme:'filled_blue', size:'large', text:'signin_with', locale:'ja'});
+  }else{
+    setTimeout(initGoogleSignIn, 200);
+  }
+}
+
+async function onGoogleSignIn(response){
+  _lastIdToken = response.credential;
+  try{
+    const data = await postToGas({action:'portalAuth', idToken:response.credential});
+    if(data.ok){
+      setDeviceToken(data.deviceToken);
+      CURRENT_USER = {email:data.email, name:data.name, rank:data.rank, access:data.access};
+      showApp();
+    }else if(data.needsRequest){
+      document.getElementById('reqEmail').value = data.email;
+      showRequestCard();
+    }else{
+      showAuthError(data.message || 'ログインに失敗しました');
+    }
+  }catch(e){
+    showAuthError('通信エラー: ' + e.message);
+  }
+}
+
+function showAuthError(msg){
+  const el = document.getElementById('authError');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function showLoginView(msg){
+  clearDeviceToken();
+  document.getElementById('appBody').style.display = 'none';
+  document.getElementById('authOverlay').style.display = 'flex';
+  document.getElementById('authLoginView').style.display = 'block';
+  document.getElementById('requestCard').classList.remove('show');
+  if(msg) showAuthError(msg);
+}
+
+function showRequestCard(){
+  document.getElementById('authLoginView').style.display = 'none';
+  document.getElementById('requestCard').classList.add('show');
+}
+function hideRequestCard(){
+  document.getElementById('requestCard').classList.remove('show');
+  document.getElementById('authLoginView').style.display = 'block';
+}
+
+async function submitRequest(){
+  const name = document.getElementById('reqName').value.trim();
+  if(!name){ showToast('お名前を入力してください', 'error'); return; }
+  if(!_lastIdToken){ showToast('もう一度Googleログインからやり直してください', 'error'); hideRequestCard(); return; }
+  showToast('送信中...', 'info');
+  try{
+    const data = await postToGas({action:'portalSubmitRequest', idToken:_lastIdToken, name:name});
+    if(data.ok){
+      showToast(data.message || '申請を送信しました', 'success');
+      hideRequestCard();
+    }else{
+      showToast(data.message || '申請に失敗しました', 'error');
+    }
+  }catch(e){
+    showToast('通信エラー: ' + e.message, 'error');
+  }
+}
+
+function doLogout(){
+  clearDeviceToken();
+  location.reload();
+}
+
+// ============================================================
+//  起動時：deviceTokenがあれば自動ログイン、なければログイン画面
+// ============================================================
+async function initApp(){
+  initGoogleSignIn();
+  const token = getDeviceToken();
+  if(!token){
+    return; // ログイン画面のまま
+  }
+  try{
+    const data = await portalApi('portalGetHomeData', {});
+    if(data.ok){
+      CURRENT_USER = data.user;
+      allCards = data.cards || [];
+      NOTICES_DATA = data.notices || [];
+      showApp(true);
+    }else{
+      showLoginView(data.message || 'セッションが無効です。再度ログインしてください。');
+    }
+  }catch(e){
+    showLoginView('通信エラー: ' + e.message);
+  }
+}
+
+function showApp(alreadyLoaded){
+  document.getElementById('authOverlay').style.display = 'none';
+  document.getElementById('appBody').style.display = 'block';
+  document.getElementById('userBadge').textContent = CURRENT_USER.name || CURRENT_USER.email;
+  const rb = document.getElementById('rankBadge');
+  rb.textContent = CURRENT_USER.rank==='admin' ? '管理者' : CURRENT_USER.rank==='manager' ? '中間' : '一般';
+  rb.className = 'rank-badge ' + (CURRENT_USER.rank==='admin' || CURRENT_USER.rank==='manager' ? CURRENT_USER.rank : 'user');
+  if(CURRENT_USER.rank==='admin' || CURRENT_USER.rank==='manager'){
+    document.getElementById('adminBtns').style.display = 'flex';
+    refreshRequestBadge();
+  }
+  if(alreadyLoaded){
+    renderList();
+    renderNotices();
+  }else{
+    renderList();
+    loadAndRenderCards();
+    loadAndRenderNotices();
+  }
+}
+
+// ============================================================
+//  固定システム
+// ============================================================
+var FIXED_SYSTEMS = [
+  {
+    id: 'estimate', fixed: true,
+    title: '見積書作成システム',
+    desc:  '参考見積・本見積の作成、Google Driveへの保存、過去データの検索・読み込みができます。',
+    icon: '📋', color: 'green',
+    rank: 'admin,manager,user',
+    url: GAS_URL + '?page=estimate',
+    newTab: false
+  },
+  {
+    id: 'docs', fixed: true,
+    title: '書類管理',
+    desc:  '各種書類の保管・検索システムです。',
+    icon: '📁', color: 'gray',
+    rank: 'admin,manager,user',
+    url: 'https://drive.google.com/drive/folders/117cD3bOP9WbHgjfKmbLLMbZyr7ykd1Rn?usp=sharing',
+    newTab: true
+  },
+];
+
+var isAdminMode = false;
+var editingCardId = null;
+var editingNoticeId = null;
+var allCards = [];
+var NOTICES_DATA = [];
+
+document.addEventListener('DOMContentLoaded', initApp);
+
+// ============================================================
+//  カード — サーバーから取得して描画
+// ============================================================
+async function loadAndRenderCards(){
+  const grid = document.getElementById('listGrid');
+  const loadingEl = document.createElement('div');
+  loadingEl.className = 'list-loading';
+  loadingEl.id = 'cardLoadingIndicator';
+  loadingEl.innerHTML = '<div class="spinner"></div>カスタムシステムを読み込み中...';
+  grid.appendChild(loadingEl);
+
+  try{
+    const data = await portalApi('portalGetHomeData', {});
+    const el = document.getElementById('cardLoadingIndicator');
+    if(el) el.remove();
+    if(data.ok){
+      allCards = data.cards || [];
+      renderList();
+    }
+  }catch(e){
+    const el = document.getElementById('cardLoadingIndicator');
+    if(el) el.remove();
+    showToast('カードの読み込みに失敗しました: ' + e.message, 'error');
+  }
+}
+
+// ============================================================
+//  システム一覧描画
+// ============================================================
+function renderList(){
+  const container = document.getElementById('listGrid');
+  container.innerHTML = '';
+
+  const rank = CURRENT_USER.rank;
+  const allSystems = FIXED_SYSTEMS.concat(
+    allCards.filter(function(c){ return c.title; })
+  );
+
+  allSystems.forEach(function(sys){
+    const ranks     = (sys.rank || 'admin,manager,user').split(',');
+    const canAccess = rank === 'admin' || ranks.indexOf(rank) !== -1;
+    const isLink    = canAccess && !sys.coming && sys.url;
+
+    const el = document.createElement(isLink ? 'a' : 'div');
+    el.className = 'list-item' + (!canAccess && !sys.coming ? ' locked' : '');
+    if(isLink){
+      el.href   = sys.url;
+      el.target = (sys.newTab || !sys.fixed) ? '_blank' : '_self';
+    }
+
+    const lockBadge   = (!canAccess && !sys.coming) ? '<span class="badge-sm badge-locked">🔒 権限なし</span>' : '';
+    const comingBadge = sys.coming ? '<span class="badge-sm badge-coming">準備中</span>' : '';
+
+    let editBtns = '';
+    if(!sys.fixed){
+      editBtns =
+        '<div class="list-edit-btns">' +
+          '<button class="list-edit-btn edit" ' +
+            'onclick="event.preventDefault();event.stopPropagation();openCardEditModal(\'' + esc(sys.id) + '\')">' +
+            '編集</button>' +
+          '<button class="list-edit-btn del" ' +
+            'onclick="event.preventDefault();event.stopPropagation();deleteCard(\'' + esc(sys.id) + '\')">' +
+            '削除</button>' +
+        '</div>';
+    }
+
+    el.innerHTML =
+      '<div class="list-item-left">' +
+        '<div class="list-icon ' + (sys.color || 'green') + '">' + (sys.icon || '📄') + '</div>' +
+        '<div class="list-text">' +
+          '<div class="list-title">' + esc(sys.title) + ' ' + lockBadge + comingBadge + '</div>' +
+          '<div class="list-desc">'  + esc(sys.desc  || '') + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="list-right">' +
+        editBtns +
+        (isLink ? '<div class="list-arrow">›</div>' : '') +
+      '</div>';
+
+    container.appendChild(el);
+  });
+
+  if(isAdminMode) document.querySelector('.main').classList.add('admin-mode');
+}
+
+// ============================================================
+//  管理モード切替
+// ============================================================
+function toggleAdminMode(){
+  isAdminMode = !isAdminMode;
+  const bar  = document.getElementById('adminModeBar');
+  const btn  = document.getElementById('adminModeBtn');
+  const main = document.querySelector('.main');
+  if(isAdminMode){
+    bar.classList.add('show');
+    main.classList.add('admin-mode');
+    btn.textContent = '✕ 管理モード終了';
+    btn.style.background = '#888';
+  }else{
+    bar.classList.remove('show');
+    main.classList.remove('admin-mode');
+    btn.textContent = '⚙ 管理モード';
+    btn.style.background = 'var(--amber)';
+  }
+}
+
+// ============================================================
+//  カード CRUD
+// ============================================================
+function openCardEditModal(id){
+  editingCardId = id;
+  document.getElementById('cardEditTitle').textContent = id ? '✎ システムを編集' : '＋ システムを追加';
+  document.getElementById('ce_icon').value  = '📄';
+  document.getElementById('ce_color').value = 'green';
+  document.getElementById('ce_title').value = '';
+  document.getElementById('ce_url').value   = '';
+  document.getElementById('ce_desc').value  = '';
+  document.getElementById('ce_rank').value  = 'admin,manager,user';
+  if(id){
+    const card = allCards.filter(function(c){ return c.id === id; })[0];
+    if(card){
+      document.getElementById('ce_icon').value  = card.icon  || '📄';
+      document.getElementById('ce_color').value = card.color || 'green';
+      document.getElementById('ce_title').value = card.title || '';
+      document.getElementById('ce_url').value   = card.url   || '';
+      document.getElementById('ce_desc').value  = card.desc  || '';
+      document.getElementById('ce_rank').value  = card.rank  || 'admin,manager,user';
+    }
+  }
+  document.getElementById('cardEditModal').classList.add('open');
+}
+
+async function saveCard(){
+  const title = document.getElementById('ce_title').value.trim();
+  if(!title){ showToast('タイトルは必須です', 'error'); return; }
+  const card = {
+    title: title,
+    icon:  document.getElementById('ce_icon').value  || '📄',
+    color: document.getElementById('ce_color').value || 'green',
+    desc:  document.getElementById('ce_desc').value.trim(),
+    url:   document.getElementById('ce_url').value.trim(),
+    rank:  document.getElementById('ce_rank').value,
+  };
+  showToast('保存中...', 'info');
+  try{
+    const data = editingCardId
+      ? await portalApi('portalUpdateCard', {id:editingCardId, card:card})
+      : await portalApi('portalAddCard', {card:card});
+    showToast(editingCardId ? 'システムを更新しました' : 'システムを追加しました', 'success');
+    closeModal('cardEditModal');
+    loadAndRenderCards();
+  }catch(e){
+    showToast('エラー: ' + e.message, 'error');
+  }
+}
+
+async function deleteCard(id){
+  if(!confirm('このシステムを削除しますか？')) return;
+  showToast('削除中...', 'info');
+  try{
+    await portalApi('portalDeleteCard', {id:id});
+    showToast('削除しました', 'success');
+    loadAndRenderCards();
+  }catch(e){
+    showToast('エラー: ' + e.message, 'error');
+  }
+}
+
+// ============================================================
+//  お知らせ
+// ============================================================
+async function loadAndRenderNotices(){
+  document.getElementById('noticeDisplay').innerHTML =
+    '<div class="notice-loading"><div class="spinner"></div>読み込み中...</div>';
+  try{
+    const data = await portalApi('portalGetHomeData', {});
+    if(data.ok){
+      NOTICES_DATA = data.notices || [];
+      renderNotices();
+    }
+  }catch(e){
+    NOTICES_DATA = [];
+    renderNotices();
+    console.warn('お知らせ取得失敗:', e.message);
+  }
+}
+
+function renderNotices(){
+  const display = document.getElementById('noticeDisplay');
+  display.innerHTML = '';
+  if(!NOTICES_DATA.length){
+    display.innerHTML = '<div class="notice-empty">お知らせはありません</div>';
+    return;
+  }
+  NOTICES_DATA.forEach(function(n){
+    const colorMap = { default:'var(--text-main)', red:'#c0392b', blue:'#185FA5', green:'#1D9E75', amber:'#EF9F27' };
+    const sizeMap  = { xs:'11px', sm:'12px', md:'13px', lg:'15px', xl:'18px' };
+    const color = colorMap[n.color] || colorMap.default;
+    const size  = sizeMap[n.size]   || sizeMap.md;
+    let textHtml = esc(n.text).replace(/\n/g, '<br>');
+    if(n.url){
+      textHtml = '<a href="' + esc(n.url) + '" target="_blank" style="color:inherit;text-decoration:underline;">' +
+        textHtml + ' <span style="font-size:.8em;">🔗</span></a>';
+    }
+    const el = document.createElement('div');
+    el.className = 'notice-item';
+    el.innerHTML =
+      '<div class="notice-content">' +
+        '<span class="notice-icon">' + esc(n.icon || '📌') + '</span>' +
+        '<div class="notice-text" style="color:' + color + ';font-size:' + size + ';">' + textHtml + '</div>' +
+      '</div>' +
+      '<div class="notice-edit-btns">' +
+        '<button class="list-edit-btn edit" onclick="openNoticeModal(\'' + esc(n.id) + '\')">編集</button>' +
+        '<button class="list-edit-btn del"  onclick="deleteNotice(\'' + esc(n.id) + '\')">削除</button>' +
+      '</div>';
+    display.appendChild(el);
+  });
+}
+
+function openNoticeModal(id){
+  editingNoticeId = id;
+  const delBtn = document.getElementById('noticeDeleteBtn');
+  if(id){
+    const n = NOTICES_DATA.filter(function(x){ return x.id === id; })[0];
+    if(n){
+      document.getElementById('nm_icon').value  = n.icon  || '📌';
+      document.getElementById('nm_color').value = n.color || 'default';
+      document.getElementById('nm_size').value  = n.size  || 'md';
+      document.getElementById('nm_url').value   = n.url   || '';
+      document.getElementById('nm_text').value  = n.text  || '';
+    }
+    document.getElementById('noticeModalTitle').textContent = '✎ お知らせを編集';
+    delBtn.style.display = 'inline-flex';
+  }else{
+    document.getElementById('nm_icon').value  = '📌';
+    document.getElementById('nm_color').value = 'default';
+    document.getElementById('nm_size').value  = 'md';
+    document.getElementById('nm_url').value   = '';
+    document.getElementById('nm_text').value  = '';
+    document.getElementById('noticeModalTitle').textContent = '＋ お知らせを追加';
+    delBtn.style.display = 'none';
+  }
+  document.getElementById('noticeModal').classList.add('open');
+}
+
+async function saveNotice(){
+  const text = document.getElementById('nm_text').value.trim();
+  if(!text){ showToast('お知らせ内容を入力してください', 'error'); return; }
+  const notice = {
+    icon:  document.getElementById('nm_icon').value.trim()  || '📌',
+    color: document.getElementById('nm_color').value,
+    size:  document.getElementById('nm_size').value,
+    url:   document.getElementById('nm_url').value.trim(),
+    text:  text,
+  };
+  showToast('保存中...', 'info');
+  try{
+    if(editingNoticeId){ await portalApi('portalUpdateNotice', {id:editingNoticeId, notice:notice}); }
+    else { await portalApi('portalAddNotice', {notice:notice}); }
+    showToast(editingNoticeId ? 'お知らせを更新しました' : 'お知らせを追加しました', 'success');
+    closeModal('noticeModal');
+    loadAndRenderNotices();
+  }catch(e){
+    showToast('エラー: ' + e.message, 'error');
+  }
+}
+
+async function deleteNotice(id){
+  if(!confirm('このお知らせを削除しますか？')) return;
+  showToast('削除中...', 'info');
+  try{
+    await portalApi('portalDeleteNotice', {id:id});
+    showToast('削除しました', 'success');
+    loadAndRenderNotices();
+  }catch(e){
+    showToast('エラー: ' + e.message, 'error');
+  }
+}
+
+function deleteNoticeFromModal(){
+  closeModal('noticeModal');
+  deleteNotice(editingNoticeId);
+}
+
+// ============================================================
+//  ユーザー管理
+// ============================================================
+function openUserModal(){
+  document.getElementById('userModal').classList.add('open');
+  loadUsers();
+}
+
+async function loadUsers(){
+  document.getElementById('userTableWrap').innerHTML = '<div class="empty-msg">読み込み中...</div>';
+  try{
+    const data = await portalApi('portalGetUsers', {});
+    renderUserTable(data.data);
+  }catch(e){
+    showToast('取得失敗: ' + e.message, 'error');
+  }
+}
+
+function renderUserTable(users){
+  const w = document.getElementById('userTableWrap');
+  if(!users || !users.length){
+    w.innerHTML = '<div class="empty-msg">ユーザーが登録されていません</div>';
+    return;
+  }
+  const rows = users.map(function(u){
+    return '<tr>' +
+      '<td>' + esc(u.email) + '</td>' +
+      '<td>' + esc(u.name)  + '</td>' +
+      '<td><select class="rank-sel" onchange="changeRank(\'' + esc(u.email) + '\',this.value)">' +
+        '<option value="user"'   +(u.rank==='user'   ?' selected':'')+'>一般</option>' +
+        '<option value="manager"'+(u.rank==='manager'?' selected':'')+'>中間</option>' +
+        '<option value="admin"'  +(u.rank==='admin'  ?' selected':'')+'>管理者</option>' +
+      '</select></td>' +
+      '<td><select class="rank-sel" onchange="changeAccess(\'' + esc(u.email) + '\',this.value)">' +
+        '<option value="portal,estimate"'+(u.access==='portal,estimate'?' selected':'')+'>両方</option>' +
+        '<option value="portal"'         +(u.access==='portal'         ?' selected':'')+'>ポータル</option>' +
+        '<option value="estimate"'       +(u.access==='estimate'       ?' selected':'')+'>見積書</option>' +
+      '</select></td>' +
+      '<td>' + esc(u.date) + '</td>' +
+      '<td><button class="btn-sm-del" onclick="deleteUser(\'' + esc(u.email) + '\')">削除</button></td>' +
+    '</tr>';
+  }).join('');
+  w.innerHTML =
+    '<table class="user-table"><thead><tr>' +
+    '<th>メール</th><th>名前</th><th>ランク</th><th>アクセス</th><th>登録日</th><th></th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table>';
+}
+
+async function addUser(){
+  const email  = document.getElementById('newEmail').value.trim();
+  const name   = document.getElementById('newName').value.trim();
+  const rank   = document.getElementById('newRank').value;
+  const access = document.getElementById('newAccess').value;
+  if(!email){ showToast('メールアドレスを入力してください', 'error'); return; }
+  showToast('追加中...', 'info');
+  try{
+    await portalApi('portalAddUser', {email:email, rank:rank, name:name, access:access});
+    showToast('追加しました', 'success');
+    document.getElementById('newEmail').value = '';
+    document.getElementById('newName').value  = '';
+    loadUsers();
+  }catch(e){
+    showToast('エラー: ' + e.message, 'error');
+  }
+}
+
+async function deleteUser(email){
+  if(!confirm(email + ' を削除しますか？')) return;
+  try{
+    await portalApi('portalDeleteUser', {email:email});
+    showToast('削除しました', 'success');
+    loadUsers();
+  }catch(e){
+    showToast('エラー: ' + e.message, 'error');
+  }
+}
+
+async function changeRank(email, rank){
+  try{
+    await portalApi('portalUpdateUserRank', {email:email, rank:rank});
+    showToast('ランクを変更しました', 'success');
+  }catch(e){
+    showToast('エラー: ' + e.message, 'error');
+  }
+}
+
+async function changeAccess(email, access){
+  try{
+    await portalApi('portalUpdateUserAccess', {email:email, access:access});
+    showToast('アクセスを変更しました', 'success');
+  }catch(e){
+    showToast('エラー: ' + e.message, 'error');
+  }
+}
+
+// ============================================================
+//  ユーザー登録申請
+// ============================================================
+var _approveTargetRow = null;
+
+async function refreshRequestBadge(){
+  try{
+    const data = await portalApi('portalGetPendingCount', {});
+    const badge = document.getElementById('reqBadge');
+    if(data.count > 0){ badge.textContent = data.count; badge.style.display = 'inline-block'; }
+    else { badge.style.display = 'none'; }
+  }catch(e){}
+}
+
+function openRequestModal(){
+  document.getElementById('requestModal').classList.add('open');
+  loadNotifyEmail();
+  loadRequests();
+}
+
+async function loadNotifyEmail(){
+  try{
+    const data = await portalApi('portalGetNotifyEmail', {});
+    document.getElementById('notifyEmailInput').value = data.email || '';
+  }catch(e){}
+}
+
+async function saveNotifyEmail(){
+  const email = document.getElementById('notifyEmailInput').value.trim();
+  if(!email){ showToast('メールアドレスを入力してください', 'error'); return; }
+  showToast('保存中...', 'info');
+  try{
+    await portalApi('portalSetNotifyEmail', {email:email});
+    showToast('通知先を更新しました', 'success');
+  }catch(e){
+    showToast('エラー: ' + e.message, 'error');
+  }
+}
+
+async function loadRequests(){
+  document.getElementById('requestTableWrap').innerHTML = '<div class="empty-msg">読み込み中...</div>';
+  try{
+    const data = await portalApi('portalGetRequests', {});
+    renderRequestTable(data.data);
+  }catch(e){
+    showToast('取得失敗: ' + e.message, 'error');
+  }
+}
+
+function renderRequestTable(requests){
+  const w = document.getElementById('requestTableWrap');
+  if(!requests || !requests.length){
+    w.innerHTML = '<div class="empty-msg">申請はありません</div>';
+    return;
+  }
+  const sourceLabel = {portal:'業務ポータル', estimate:'見積書', juki:'重機日報'};
+  const statusBadge = {
+    '未処理': '<span style="background:#FEF3C7;color:#854F0B;font-size:11px;font-weight:700;padding:3px 8px;border-radius:10px;">未処理</span>',
+    '承認済み': '<span style="background:#e6f4ea;color:#0F6E56;font-size:11px;font-weight:700;padding:3px 8px;border-radius:10px;">承認済み</span>',
+    '却下': '<span style="background:#fce8e6;color:#c0392b;font-size:11px;font-weight:700;padding:3px 8px;border-radius:10px;">却下</span>'
+  };
+  const rows = requests.map(function(r){
+    const actions = r.status==='未処理'
+      ? '<button class="btn-sm" style="background:#1D9E75;margin-right:4px;" onclick="openApproveModal(' + r.row + ',\'' + esc(r.email) + '\',\'' + esc(r.name) + '\')">承認</button>' +
+        '<button class="btn-sm-del" onclick="doReject(' + r.row + ')">却下</button>'
+      : '<span style="font-size:11px;color:#999;">' + esc(r.processedBy) + '</span>';
+    return '<tr>' +
+      '<td>' + esc(r.email) + '</td>' +
+      '<td>' + esc(r.name || '—') + '</td>' +
+      '<td>' + (sourceLabel[r.source] || r.source) + '</td>' +
+      '<td style="font-size:11px;color:#888;">' + esc(r.requestedAt) + '</td>' +
+      '<td>' + (statusBadge[r.status] || r.status) + '</td>' +
+      '<td>' + actions + '</td>' +
+    '</tr>';
+  }).join('');
+  w.innerHTML =
+    '<table class="user-table"><thead><tr>' +
+    '<th>メール</th><th>名前</th><th>申請元</th><th>申請日時</th><th>状態</th><th></th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table>';
+}
+
+function openApproveModal(row, email, name){
+  _approveTargetRow = row;
+  document.getElementById('approveTargetLabel').textContent = (name || email) + ' さんを承認';
+  document.getElementById('approveRank').value = 'user';
+  document.getElementById('accessPortal').checked = true;
+  document.getElementById('accessEstimate').checked = false;
+  document.getElementById('accessJuki').checked = false;
+  document.getElementById('approveModal').classList.add('open');
+}
+
+async function confirmApprove(){
+  const rank = document.getElementById('approveRank').value;
+  const accessList = [];
+  if(document.getElementById('accessPortal').checked) accessList.push('portal');
+  if(document.getElementById('accessEstimate').checked) accessList.push('estimate');
+  if(document.getElementById('accessJuki').checked) accessList.push('juki');
+  if(accessList.length===0){ showToast('少なくとも1つのアクセス権限を選んでください', 'error'); return; }
+  const access = accessList.join(',');
+  showToast('承認処理中...', 'info');
+  try{
+    await portalApi('portalApproveRequest', {row:_approveTargetRow, rank:rank, access:access});
+    showToast('承認しました', 'success');
+    closeModal('approveModal');
+    loadRequests();
+    refreshRequestBadge();
+  }catch(e){
+    showToast('エラー: ' + e.message, 'error');
+  }
+}
+
+async function doReject(row){
+  if(!confirm('この申請を却下しますか？')) return;
+  showToast('処理中...', 'info');
+  try{
+    await portalApi('portalRejectRequest', {row:row});
+    showToast('却下しました', 'success');
+    loadRequests();
+    refreshRequestBadge();
+  }catch(e){
+    showToast('エラー: ' + e.message, 'error');
+  }
+}
+
+// ============================================================
+//  ユーティリティ
+// ============================================================
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
+function showToast(msg, type){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type + ' show';
+  clearTimeout(t._tid);
+  t._tid = setTimeout(function(){ t.classList.remove('show'); }, 4000);
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('.modal-bg').forEach(function(m){
+    m.addEventListener('click', function(e){ if(e.target === this) m.classList.remove('open'); });
+  });
+});
+</script>
+</body>
+</html>

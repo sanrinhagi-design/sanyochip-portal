@@ -288,18 +288,38 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--gray-bg);color:var(-
       <div class="form-field"><label>タイトル *</label><input type="text" id="ce_title" placeholder="システム名"></div>
       <div class="form-field"><label>URL</label><input type="text" id="ce_url" placeholder="https://..."></div>
       <div class="form-field"><label>説明</label><textarea id="ce_desc" rows="2" placeholder="システムの説明"></textarea></div>
-      <div class="form-field"><label>アクセス権限</label>
-        <select id="ce_rank">
-          <option value="admin,manager,user">全員（全ランク）</option>
-          <option value="admin,manager">管理者＋中間のみ</option>
-          <option value="admin">管理者のみ</option>
-        </select>
+      <div class="form-field">
+        <label style="display:flex;align-items:center;justify-content:space-between;">
+          <span>アクセス権限（このカードを表示する条件）</span>
+          <span style="font-size:11px;color:#185FA5;cursor:pointer;font-weight:600;" onclick="openPermissionModal()">権限を管理</span>
+        </label>
+        <div id="ce_access_list" style="display:flex;flex-direction:column;gap:6px;margin-top:4px;border:1px solid var(--gray-border);border-radius:8px;padding:10px;"></div>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn" onclick="closeModal('cardEditModal')">キャンセル</button>
       <button class="btn btn-green" onclick="saveCard()">保存</button>
     </div>
+  </div>
+</div>
+
+<!-- アクセス権限管理モーダル -->
+<div class="modal-bg" id="permissionModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>🔑 アクセス権限の管理</h2>
+      <button class="modal-close" onclick="closeModal('permissionModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--text-sub);margin-bottom:14px;">カードに割り当てる権限をあらかじめ登録します。登録した権限は、カード編集とユーザー管理の両方で選べるようになります。</p>
+      <div id="permissionListWrap" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
+      <div style="display:flex;gap:8px;padding-top:14px;border-top:1px solid var(--gray-border);">
+        <input type="text" id="perm_key" placeholder="権限名（例: safety）" style="flex:1;">
+        <input type="text" id="perm_label" placeholder="表示名（例: 安全書類システム）" style="flex:1;">
+        <button class="btn btn-green" onclick="addPermission()" style="white-space:nowrap;">＋ 追加</button>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal('permissionModal')">閉じる</button></div>
   </div>
 </div>
 
@@ -349,26 +369,57 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--gray-bg);color:var(-
       <button class="modal-close" onclick="closeModal('userModal')">✕</button>
     </div>
     <div class="modal-body">
-      <div class="add-form">
-        <div class="field"><label>メールアドレス</label><input type="email" id="newEmail" placeholder="example@gmail.com"></div>
-        <div class="field"><label>名前</label><input type="text" id="newName" placeholder="山田 太郎"></div>
-        <div class="field"><label>ランク</label>
-          <select id="newRank">
-            <option value="user">一般</option><option value="manager">中間</option><option value="admin">管理者</option>
-          </select>
-        </div>
-        <div class="field"><label>アクセス</label>
-          <select id="newAccess">
-            <option value="portal,estimate">両方</option>
-            <option value="portal">ポータルのみ</option>
-            <option value="estimate">見積書のみ</option>
-          </select>
-        </div>
-        <button class="btn btn-green" onclick="addUser()" style="align-self:end;padding:8px 14px;">＋</button>
-      </div>
+      <button class="btn btn-green" onclick="openAddUserModal()" style="margin-bottom:16px;">＋ 新しいユーザーを追加</button>
       <div id="userTableWrap"><div class="empty-msg">読み込み中...</div></div>
     </div>
     <div class="modal-footer"><button class="btn" onclick="closeModal('userModal')">閉じる</button></div>
+  </div>
+</div>
+
+<!-- 新規ユーザー追加モーダル -->
+<div class="modal-bg" id="addUserModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>＋ 新しいユーザーを追加</h2>
+      <button class="modal-close" onclick="closeModal('addUserModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-field"><label>メールアドレス</label><input type="email" id="newEmail" placeholder="example@gmail.com"></div>
+      <div class="form-field"><label>名前</label><input type="text" id="newName" placeholder="山田 太郎"></div>
+      <div class="form-field"><label>ランク</label>
+        <select id="newRank">
+          <option value="user">一般</option><option value="manager">中間</option><option value="admin">管理者</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>アクセス権限</label>
+        <div id="newAccessList" style="display:flex;flex-direction:column;gap:8px;margin-top:4px;"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('addUserModal')">キャンセル</button>
+      <button class="btn btn-green" onclick="addUser()">追加する</button>
+    </div>
+  </div>
+</div>
+
+<!-- アクセス権限編集モーダル -->
+<div class="modal-bg" id="editAccessModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>🔑 アクセス権限を編集</h2>
+      <button class="modal-close" onclick="closeModal('editAccessModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-field">
+        <label id="editAccessLabel" style="font-weight:700;font-size:14px;color:#1a1a18;"></label>
+      </div>
+      <div id="editAccessList" style="display:flex;flex-direction:column;gap:8px;margin-top:8px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('editAccessModal')">キャンセル</button>
+      <button class="btn btn-green" onclick="saveEditAccess()">保存</button>
+    </div>
   </div>
 </div>
 
@@ -413,17 +464,7 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--gray-bg);color:var(-
       </div>
       <div class="form-field">
         <label>アクセス権限</label>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
-          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">
-            <input type="checkbox" id="accessPortal" checked style="width:16px;height:16px;"> 業務ポータル
-          </label>
-          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">
-            <input type="checkbox" id="accessEstimate" style="width:16px;height:16px;"> 見積書システム
-          </label>
-          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">
-            <input type="checkbox" id="accessJuki" style="width:16px;height:16px;"> 重機日報
-          </label>
-        </div>
+        <div id="approveAccessList" style="display:flex;flex-direction:column;gap:8px;margin-top:4px;"></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -578,6 +619,7 @@ async function initApp(){
       CURRENT_USER = data.user;
       allCards = data.cards || [];
       NOTICES_DATA = data.notices || [];
+      ALL_PERMISSIONS = data.permissions || [];
       showApp(true);
     }else{
       showLoginView(data.message || 'セッションが無効です。再度ログインしてください。');
@@ -617,7 +659,7 @@ var FIXED_SYSTEMS = [
     title: '見積書作成システム',
     desc:  '参考見積・本見積の作成、Google Driveへの保存、過去データの検索・読み込みができます。',
     icon: '📋', color: 'green',
-    rank: 'admin,manager,user',
+    access: 'estimate',
     url: GAS_URL + '?page=estimate',
     newTab: false
   },
@@ -626,7 +668,7 @@ var FIXED_SYSTEMS = [
     title: '書類管理',
     desc:  '各種書類の保管・検索システムです。',
     icon: '📁', color: 'gray',
-    rank: 'admin,manager,user',
+    access: 'portal',
     url: 'https://drive.google.com/drive/folders/117cD3bOP9WbHgjfKmbLLMbZyr7ykd1Rn?usp=sharing',
     newTab: true
   },
@@ -637,8 +679,74 @@ var editingCardId = null;
 var editingNoticeId = null;
 var allCards = [];
 var NOTICES_DATA = [];
+var ALL_PERMISSIONS = [];
 
 document.addEventListener('DOMContentLoaded', initApp);
+
+// ============================================================
+//  アクセス権限マスタ
+// ============================================================
+function openPermissionModal(){
+  document.getElementById('permissionModal').classList.add('open');
+  loadPermissions();
+}
+
+async function loadPermissions(){
+  document.getElementById('permissionListWrap').innerHTML = '<div class="empty-msg">読み込み中...</div>';
+  try{
+    const data = await portalApi('portalGetPermissions', {});
+    ALL_PERMISSIONS = data.data || [];
+    renderPermissionList();
+  }catch(e){
+    showToast('取得失敗: ' + e.message, 'error');
+  }
+}
+
+function renderPermissionList(){
+  const w = document.getElementById('permissionListWrap');
+  if(!ALL_PERMISSIONS.length){
+    w.innerHTML = '<div class="empty-msg">権限がありません</div>';
+    return;
+  }
+  w.innerHTML = ALL_PERMISSIONS.map(function(p){
+    const delBtn = p.builtin
+      ? '<span style="font-size:11px;color:var(--text-sub);">初期権限</span>'
+      : '<span style="cursor:pointer;color:#c0392b;" onclick="deletePermission(\'' + esc(p.key) + '\')"><i style="font-style:normal;">✕</i></span>';
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--gray-bg);border-radius:8px;">' +
+      '<div><span style="font-size:13px;font-weight:700;">' + esc(p.key) + '</span>' +
+      '<span style="font-size:12px;color:var(--text-sub);margin-left:8px;">' + esc(p.label) + '</span></div>' +
+      delBtn +
+    '</div>';
+  }).join('');
+}
+
+async function addPermission(){
+  const key = document.getElementById('perm_key').value.trim();
+  const label = document.getElementById('perm_label').value.trim();
+  if(!key || !label){ showToast('権限名と表示名の両方を入力してください', 'error'); return; }
+  showToast('追加中...', 'info');
+  try{
+    await portalApi('portalAddPermission', {key:key, label:label});
+    showToast('権限を追加しました', 'success');
+    document.getElementById('perm_key').value = '';
+    document.getElementById('perm_label').value = '';
+    loadPermissions();
+  }catch(e){
+    showToast('エラー: ' + e.message, 'error');
+  }
+}
+
+async function deletePermission(key){
+  if(!confirm(key + ' を削除しますか？この権限を使っているカードやユーザーからは表示条件が外れます。')) return;
+  showToast('削除中...', 'info');
+  try{
+    await portalApi('portalDeletePermission', {key:key});
+    showToast('削除しました', 'success');
+    loadPermissions();
+  }catch(e){
+    showToast('エラー: ' + e.message, 'error');
+  }
+}
 
 // ============================================================
 //  カード — サーバーから取得して描画
@@ -657,6 +765,7 @@ async function loadAndRenderCards(){
     if(el) el.remove();
     if(data.ok){
       allCards = data.cards || [];
+      ALL_PERMISSIONS = data.permissions || [];
       renderList();
     }
   }catch(e){
@@ -673,14 +782,15 @@ function renderList(){
   const container = document.getElementById('listGrid');
   container.innerHTML = '';
 
-  const rank = CURRENT_USER.rank;
+  const myAccess = (CURRENT_USER.access || '').split(',').map(function(a){return a.trim();}).filter(Boolean);
+  const isAdmin = CURRENT_USER.rank === 'admin';
   const allSystems = FIXED_SYSTEMS.concat(
     allCards.filter(function(c){ return c.title; })
   );
 
   allSystems.forEach(function(sys){
-    const ranks     = (sys.rank || 'admin,manager,user').split(',');
-    const canAccess = rank === 'admin' || ranks.indexOf(rank) !== -1;
+    const required  = (sys.access || '').split(',').map(function(a){return a.trim();}).filter(Boolean);
+    const canAccess = isAdmin || required.length === 0 || required.some(function(r){ return myAccess.indexOf(r) !== -1; });
     const isLink    = canAccess && !sys.coming && sys.url;
 
     const el = document.createElement(isLink ? 'a' : 'div');
@@ -749,6 +859,22 @@ function toggleAdminMode(){
 // ============================================================
 //  カード CRUD
 // ============================================================
+function renderCeAccessCheckboxes(selected){
+  const wrap = document.getElementById('ce_access_list');
+  const selectedList = (selected||'').split(',').map(function(a){return a.trim();}).filter(Boolean);
+  if(!ALL_PERMISSIONS.length){
+    wrap.innerHTML = '<div style="font-size:12px;color:var(--text-sub);">権限が登録されていません</div>';
+    return;
+  }
+  wrap.innerHTML = ALL_PERMISSIONS.map(function(p){
+    const checked = selectedList.indexOf(p.key) !== -1 ? 'checked' : '';
+    return '<label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">' +
+      '<input type="checkbox" class="ce-access-cb" value="' + esc(p.key) + '" ' + checked + ' style="width:16px;height:16px;">' +
+      esc(p.key) + ' - ' + esc(p.label) +
+    '</label>';
+  }).join('');
+}
+
 function openCardEditModal(id){
   editingCardId = id;
   document.getElementById('cardEditTitle').textContent = id ? '✎ システムを編集' : '＋ システムを追加';
@@ -757,7 +883,7 @@ function openCardEditModal(id){
   document.getElementById('ce_title').value = '';
   document.getElementById('ce_url').value   = '';
   document.getElementById('ce_desc').value  = '';
-  document.getElementById('ce_rank').value  = 'admin,manager,user';
+  let selectedAccess = '';
   if(id){
     const card = allCards.filter(function(c){ return c.id === id; })[0];
     if(card){
@@ -766,22 +892,24 @@ function openCardEditModal(id){
       document.getElementById('ce_title').value = card.title || '';
       document.getElementById('ce_url').value   = card.url   || '';
       document.getElementById('ce_desc').value  = card.desc  || '';
-      document.getElementById('ce_rank').value  = card.rank  || 'admin,manager,user';
+      selectedAccess = card.access || '';
     }
   }
+  renderCeAccessCheckboxes(selectedAccess);
   document.getElementById('cardEditModal').classList.add('open');
 }
 
 async function saveCard(){
   const title = document.getElementById('ce_title').value.trim();
   if(!title){ showToast('タイトルは必須です', 'error'); return; }
+  const accessList = Array.from(document.querySelectorAll('.ce-access-cb:checked')).map(function(cb){return cb.value;});
   const card = {
     title: title,
     icon:  document.getElementById('ce_icon').value  || '📄',
     color: document.getElementById('ce_color').value || 'green',
     desc:  document.getElementById('ce_desc').value.trim(),
     url:   document.getElementById('ce_url').value.trim(),
-    rank:  document.getElementById('ce_rank').value,
+    access: accessList.join(','),
   };
   showToast('保存中...', 'info');
   try{
@@ -949,6 +1077,10 @@ function renderUserTable(users){
     return;
   }
   const rows = users.map(function(u){
+    const accessList = (u.access||'').split(',').map(function(a){return a.trim();}).filter(Boolean);
+    const accessBadges = accessList.length
+      ? accessList.map(function(a){return '<span class="badge-sm" style="background:var(--green-light);color:var(--green-dark);margin-right:4px;">'+esc(a)+'</span>';}).join('')
+      : '<span style="font-size:11px;color:var(--text-sub);">なし</span>';
     return '<tr>' +
       '<td>' + esc(u.email) + '</td>' +
       '<td>' + esc(u.name)  + '</td>' +
@@ -956,12 +1088,9 @@ function renderUserTable(users){
         '<option value="user"'   +(u.rank==='user'   ?' selected':'')+'>一般</option>' +
         '<option value="manager"'+(u.rank==='manager'?' selected':'')+'>中間</option>' +
         '<option value="admin"'  +(u.rank==='admin'  ?' selected':'')+'>管理者</option>' +
+        '<option value="viewer"' +(u.rank==='viewer' ?' selected':'')+'>閲覧専用</option>' +
       '</select></td>' +
-      '<td><select class="rank-sel" onchange="changeAccess(\'' + esc(u.email) + '\',this.value)">' +
-        '<option value="portal,estimate"'+(u.access==='portal,estimate'?' selected':'')+'>両方</option>' +
-        '<option value="portal"'         +(u.access==='portal'         ?' selected':'')+'>ポータル</option>' +
-        '<option value="estimate"'       +(u.access==='estimate'       ?' selected':'')+'>見積書</option>' +
-      '</select></td>' +
+      '<td>' + accessBadges + ' <span style="font-size:11px;color:#185FA5;cursor:pointer;font-weight:600;" onclick="openEditAccessModal(\''+esc(u.email)+'\',\''+esc(u.access||'')+'\')">編集</span></td>' +
       '<td>' + esc(u.date) + '</td>' +
       '<td><button class="btn-sm-del" onclick="deleteUser(\'' + esc(u.email) + '\')">削除</button></td>' +
     '</tr>';
@@ -972,18 +1101,62 @@ function renderUserTable(users){
     '</tr></thead><tbody>' + rows + '</tbody></table>';
 }
 
+function renderAccessCheckboxes(containerId, selected){
+  const wrap = document.getElementById(containerId);
+  const selectedList = (selected||'').split(',').map(function(a){return a.trim();}).filter(Boolean);
+  if(!ALL_PERMISSIONS.length){
+    wrap.innerHTML = '<div style="font-size:12px;color:var(--text-sub);">権限が登録されていません</div>';
+    return;
+  }
+  wrap.innerHTML = ALL_PERMISSIONS.map(function(p){
+    const checked = selectedList.indexOf(p.key) !== -1 ? 'checked' : '';
+    return '<label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">' +
+      '<input type="checkbox" class="' + containerId + '-cb" value="' + esc(p.key) + '" ' + checked + ' style="width:16px;height:16px;">' +
+      esc(p.key) + ' - ' + esc(p.label) +
+    '</label>';
+  }).join('');
+}
+
+function openAddUserModal(){
+  document.getElementById('newEmail').value = '';
+  document.getElementById('newName').value = '';
+  document.getElementById('newRank').value = 'user';
+  renderAccessCheckboxes('newAccessList', '');
+  document.getElementById('addUserModal').classList.add('open');
+}
+
 async function addUser(){
   const email  = document.getElementById('newEmail').value.trim();
   const name   = document.getElementById('newName').value.trim();
   const rank   = document.getElementById('newRank').value;
-  const access = document.getElementById('newAccess').value;
+  const accessList = Array.from(document.querySelectorAll('.newAccessList-cb:checked')).map(function(cb){return cb.value;});
   if(!email){ showToast('メールアドレスを入力してください', 'error'); return; }
   showToast('追加中...', 'info');
   try{
-    await portalApi('portalAddUser', {email:email, rank:rank, name:name, access:access});
+    await portalApi('portalAddUser', {email:email, rank:rank, name:name, access:accessList.join(',')});
     showToast('追加しました', 'success');
-    document.getElementById('newEmail').value = '';
-    document.getElementById('newName').value  = '';
+    closeModal('addUserModal');
+    loadUsers();
+  }catch(e){
+    showToast('エラー: ' + e.message, 'error');
+  }
+}
+
+var _editAccessEmail = null;
+function openEditAccessModal(email, currentAccess){
+  _editAccessEmail = email;
+  document.getElementById('editAccessLabel').textContent = email;
+  renderAccessCheckboxes('editAccessList', currentAccess);
+  document.getElementById('editAccessModal').classList.add('open');
+}
+
+async function saveEditAccess(){
+  const accessList = Array.from(document.querySelectorAll('.editAccessList-cb:checked')).map(function(cb){return cb.value;});
+  showToast('更新中...', 'info');
+  try{
+    await portalApi('portalUpdateUserAccess', {email:_editAccessEmail, access:accessList.join(',')});
+    showToast('アクセス権限を更新しました', 'success');
+    closeModal('editAccessModal');
     loadUsers();
   }catch(e){
     showToast('エラー: ' + e.message, 'error');
@@ -1104,18 +1277,13 @@ function openApproveModal(row, email, name){
   _approveTargetRow = row;
   document.getElementById('approveTargetLabel').textContent = (name || email) + ' さんを承認';
   document.getElementById('approveRank').value = 'user';
-  document.getElementById('accessPortal').checked = true;
-  document.getElementById('accessEstimate').checked = false;
-  document.getElementById('accessJuki').checked = false;
+  renderAccessCheckboxes('approveAccessList', 'portal');
   document.getElementById('approveModal').classList.add('open');
 }
 
 async function confirmApprove(){
   const rank = document.getElementById('approveRank').value;
-  const accessList = [];
-  if(document.getElementById('accessPortal').checked) accessList.push('portal');
-  if(document.getElementById('accessEstimate').checked) accessList.push('estimate');
-  if(document.getElementById('accessJuki').checked) accessList.push('juki');
+  const accessList = Array.from(document.querySelectorAll('.approveAccessList-cb:checked')).map(function(cb){return cb.value;});
   if(accessList.length===0){ showToast('少なくとも1つのアクセス権限を選んでください', 'error'); return; }
   const access = accessList.join(',');
   showToast('承認処理中...', 'info');

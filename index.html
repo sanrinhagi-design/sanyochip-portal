@@ -1076,7 +1076,7 @@ function renderUserTable(users){
     w.innerHTML = '<div class="empty-msg">ユーザーが登録されていません</div>';
     return;
   }
-  const rows = users.map(function(u){
+  const rows = users.map(function(u, idx){
     const accessList = (u.access||'').split(',').map(function(a){return a.trim();}).filter(Boolean);
     const accessBadges = accessList.length
       ? accessList.map(function(a){return '<span class="badge-sm" style="background:var(--green-light);color:var(--green-dark);margin-right:4px;">'+esc(a)+'</span>';}).join('')
@@ -1091,15 +1091,32 @@ function renderUserTable(users){
         '<option value="viewer"' +(u.rank==='viewer' ?' selected':'')+'>閲覧専用</option>' +
       '</select></td>' +
       '<td>' + accessBadges + ' <span style="font-size:11px;color:#185FA5;cursor:pointer;font-weight:600;" onclick="openEditAccessModal(\''+esc(u.email)+'\',\''+esc(u.access||'')+'\')">編集</span></td>' +
-      '<td>' + esc(u.date) + '</td>' +
-      '<td><button class="btn-sm-del" onclick="deleteUser(\'' + esc(u.email) + '\')">削除</button></td>' +
+      '<td style="text-align:center;position:relative;">' +
+        '<span class="row-menu-btn" onclick="toggleRowMenu(event,' + idx + ')" style="cursor:pointer;font-size:18px;color:var(--text-sub);padding:4px 8px;">⋮</span>' +
+        '<div class="row-menu" id="rowMenu' + idx + '" style="display:none;position:absolute;right:0;top:100%;background:#fff;border:1px solid var(--gray-border);border-radius:8px;box-shadow:var(--shadow-md);z-index:50;min-width:160px;text-align:left;">' +
+          '<div style="padding:8px 12px;font-size:11px;color:var(--text-sub);border-bottom:1px solid var(--gray-border);">登録日: ' + esc(u.date) + '</div>' +
+          '<div style="padding:9px 12px;font-size:13px;color:#c0392b;cursor:pointer;" onclick="deleteUser(\'' + esc(u.email) + '\')">削除する</div>' +
+        '</div>' +
+      '</td>' +
     '</tr>';
   }).join('');
   w.innerHTML =
     '<table class="user-table"><thead><tr>' +
-    '<th>メール</th><th>名前</th><th>ランク</th><th>アクセス</th><th>登録日</th><th></th>' +
+    '<th>メール</th><th>名前</th><th>ランク</th><th>アクセス</th><th></th>' +
     '</tr></thead><tbody>' + rows + '</tbody></table>';
 }
+
+function toggleRowMenu(evt, idx){
+  evt.stopPropagation();
+  document.querySelectorAll('.row-menu').forEach(function(m){
+    if(m.id !== 'rowMenu'+idx) m.style.display = 'none';
+  });
+  const menu = document.getElementById('rowMenu'+idx);
+  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+document.addEventListener('click', function(){
+  document.querySelectorAll('.row-menu').forEach(function(m){ m.style.display = 'none'; });
+});
 
 function renderAccessCheckboxes(containerId, selected){
   const wrap = document.getElementById(containerId);

@@ -1,1351 +1,2341 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>業務ポータル｜山陽チップ工業株式会社</title>
-<meta name="theme-color" content="#1D9E75">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --green-dark:#0F6E56;--green-main:#1D9E75;--green-light:#e6f4ea;
-  --amber:#EF9F27;--amber-light:#fffbeb;
-  --gray-bg:#f5f6f8;--gray-card:#fff;--gray-border:#e2e4e8;
-  --text-main:#1a1a18;--text-sub:#666660;
-  --shadow-sm:0 1px 3px rgba(0,0,0,.05);
-  --shadow-md:0 4px 12px rgba(0,0,0,.08);
+
+!DOCTYPE html
+html lang=ja
+head
+meta charset=UTF-8
+meta name=viewport content=width=device-width, initial-scale=1.0
+title見積書作成システム｜山陽チップ工業title
+script src=httpscdnjs.cloudflare.comajaxlibsxlsx0.18.5xlsx.full.min.jsscript
+style
+{box-sizingborder-box;margin0;padding0;}
+html,body{overflow-xhidden;width100%;}
+body{font-family'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif;background#f2f2ee;color#222;font-size14px;min-height100vh;}
+
+.app-header{background#fff;border-bottom1px solid #ddd;padding10px 20px;displayflex;align-itemscenter;justify-contentspace-between;positionsticky;top0;z-index200;box-shadow0 1px 4px rgba(0,0,0,.06);}
+.hd-left{displayflex;align-itemscenter;gap10px;}
+.hd-left h1{font-size15px;font-weight700;white-spacenowrap;}
+.company-tag{font-size11px;color#666;background#f0f0eb;padding3px 9px;border-radius4px;white-spacenowrap;}
+.hd-right{displayflex;align-itemscenter;gap8px;flex-wrapwrap;}
+
+.btn{padding8px 18px;border-radius7px;font-size13px;font-weight500;cursorpointer;border1px solid #ccc;background#fff;color#333;transitionall .15s;white-spacenowrap;}
+.btnhover{background#f4f4f0;}
+.btn-blue{border-color#378ADD;background#378ADD;color#fff;}
+.btn-bluehover{background#185FA5;}
+.btn-green{border-color#1D9E75;background#1D9E75;color#fff;}
+.btn-greenhover{background#0F6E56;}
+.btn-greendisabled{background#9ED4C3;border-color#9ED4C3;cursornot-allowed;}
+.btn-red{border-color#E24B4A;background#E24B4A;color#fff;}
+.btn-redhover{background#A32D2D;}
+.btn-sm{padding5px 11px;border-radius5px;font-size12px;font-weight500;cursorpointer;bordernone;background#378ADD;color#fff;white-spacenowrap;}
+.btn-smhover{background#185FA5;}
+
+.status-badge{displayinline-block;font-size11px;font-weight700;padding2px 8px;border-radius4px;white-spacenowrap;}
+.status-badge.draft{background#FEF3C7;color#854F0B;border1px solid #EF9F27;}
+.status-badge.confirmed{background#e6f4ea;color#0F6E56;border1px solid #1D9E75;}
+
+.status-bar{displayflex;align-itemscenter;gap8px;padding10px 14px;background#fffbeb;border1px solid #EF9F27;border-radius8px;margin-bottom12px;font-size13px;flex-wrapwrap;}
+.status-bar.confirmed{background#e6f4ea;border-color#1D9E75;}
+.status-bar-label{font-weight700;color#854F0B;}
+.status-bar.confirmed .status-bar-label{color#0F6E56;}
+.status-toggle-btn{padding5px 14px;border-radius6px;font-size12px;font-weight700;cursorpointer;bordernone;white-spacenowrap;}
+.status-toggle-btn.to-confirmed{background#1D9E75;color#fff;}
+.status-toggle-btn.to-confirmedhover{background#0F6E56;}
+.status-toggle-btn.to-draft{background#EF9F27;color#fff;}
+.status-toggle-btn.to-drafthover{background#b87009;}
+
+.s-row{displayflex;gap8px;margin-bottom7px;}
+.s-row input{flex1;padding7px 10px;border1px solid #ddd;border-radius6px;font-size13px;color#222;}
+.s-row inputfocus{outlinenone;border-color#378ADD;}
+.s-row2{displayflex;gap8px;margin-bottom6px;}
+.s-row2 input{flex1;padding6px 10px;border1px solid #ddd;border-radius6px;font-size12px;color#222;}
+.s-row2 inputfocus{outlinenone;border-color#378ADD;}
+.s-status-row{displayflex;gap6px;margin-bottom6px;flex-wrapwrap;}
+.s-status-btn{padding5px 12px;border-radius20px;font-size12px;border1px solid #ddd;background#fff;cursorpointer;color#666;transitionall .15s;}
+.s-status-btnhover{border-color#378ADD;color#378ADD;}
+.s-status-btn.active{background#378ADD;border-color#378ADD;color#fff;font-weight700;}
+.btn-exec{padding7px 14px;border-radius6px;font-size13px;font-weight500;cursorpointer;bordernone;background#378ADD;color#fff;white-spacenowrap;}
+.btn-exechover{background#185FA5;}
+.btn-execdisabled{background#aaa;cursornot-allowed;}
+.result-count{font-size11px;color#888;margin6px 0 4px;displaynone;}
+.search-results{max-height52vh;overflow-yauto;margin-top8px;border1px solid #f0f0eb;border-radius8px;}
+.result-empty{padding36px 20px;text-aligncenter;color#aaa;font-size13px;line-height1.8;}
+.result-loading{padding36px 20px;text-aligncenter;color#888;font-size13px;}
+.result-item{padding12px 16px;border-bottom1px solid #f4f4f0;displayflex;align-itemsflex-start;justify-contentspace-between;gap10px;}
+.result-itemlast-child{border-bottomnone;}
+.result-itemhover{background#f8fbff;}
+.result-item-l{flex1;min-width0;}
+.res-no{font-size11px;font-weight700;color#185FA5;margin-bottom3px;displayflex;align-itemscenter;gap6px;}
+.res-client{font-size13px;font-weight600;overflowhidden;text-overflowellipsis;white-spacenowrap;}
+.res-project{font-size11px;color#888;margin-top2px;overflowhidden;text-overflowellipsis;white-spacenowrap;}
+.result-item-r{text-alignright;flex-shrink0;}
+.res-amount{font-size13px;font-weight700;color#1a6b2e;white-spacenowrap;}
+.res-date{font-size11px;color#bbb;margin-top2px;}
+.btn-load{margin-top6px;padding5px 12px;border-radius5px;font-size12px;font-weight600;cursorpointer;border1px solid #1D9E75;background#fff;color#1D9E75;}
+.btn-loadhover{background#e6f4ea;}
+.search-modal{width620px;max-width96vw;}
+
+.container{width100%;max-width1500px;margin0 auto;padding16px 16px 60px;}
+.loaded-banner{background#e6f4ea;border1px solid #a8d5b5;border-radius8px;padding10px 16px;margin-bottom12px;font-size13px;color#1a5c2e;displaynone;align-itemscenter;justify-contentspace-between;gap12px;}
+.loaded-banner.show{displayflex;}
+.loaded-banner button{backgroundnone;bordernone;cursorpointer;font-size12px;color#777;text-decorationunderline;white-spacenowrap;}
+
+.section{background#fff;border1px solid #ddd;border-radius10px;padding16px 20px;margin-bottom12px;}
+.section-title{font-size11px;font-weight700;color#888;letter-spacing.08em;text-transformuppercase;margin-bottom13px;}
+.grid-2{displaygrid;grid-template-columns1fr 1fr;gap12px;}
+.field{displayflex;flex-directioncolumn;gap4px;}
+.field label{font-size12px;color#666;font-weight600;}
+.field input,.field textarea{border1px solid #ddd;border-radius6px;padding8px 11px;font-size14px;color#222;background#fff;transitionborder-color .15s;width100%;}
+.field inputfocus,.field textareafocus{outlinenone;border-color#1D9E75;}
+.field input[readonly]{background#f8f8f6;color#555;cursordefault;}
+
+.no-gen-wrap{displayflex;gap6px;align-itemscenter;}
+.no-gen-wrap input{flex1;}
+.abbr-wrap{displayflex;gap6px;align-itemscenter;}
+.abbr-wrap input{width130px;}
+
+.kiki-section{background#fff;border1px solid #ddd;border-radius10px;padding16px 20px;margin-bottom12px;}
+.kiki-header{displayflex;align-itemscenter;justify-contentspace-between;margin-bottom12px;gap8px;flex-wrapwrap;}
+.kiki-header-title{font-size11px;font-weight700;color#888;letter-spacing.08em;text-transformuppercase;}
+.kiki-total-box{background#f0fdf4;border1px solid #a8d5b5;border-radius8px;padding8px 14px;font-size13px;color#0F6E56;font-weight700;}
+
+.kiki-table-wrap{width100%;overflow-xauto;-webkit-overflow-scrollingtouch;}
+table.kiki-tbl{width100%;border-collapsecollapse;font-size13px;min-width520px;}
+table.kiki-tbl th{font-size11px;font-weight700;color#555;padding7px 8px;text-alignleft;border-bottom1px solid #ddd;background#f8f8f6;white-spacenowrap;}
+table.kiki-tbl td{padding7px 8px;border-bottom1px solid #f0f0eb;vertical-alignmiddle;font-size13px;}
+table.kiki-tbl trlast-child td{border-bottomnone;}
+table.kiki-tbl trhover td{background#f8fbff;}
+table.kiki-tbl td.mode-badge span{font-size11px;font-weight700;padding2px 8px;border-radius4px;}
+table.kiki-tbl td.mode-badge span.mode-kiki{background#e8f3fc;color#185FA5;}
+table.kiki-tbl td.mode-badge span.mode-zenbu{background#e6f4ea;color#0F6E56;}
+table.kiki-tbl td.amt{font-weight700;color#1a6b2e;text-alignright;}
+table.kiki-tbl td.mans{text-alignright;}
+.kiki-tbl-foot{displayflex;align-itemscenter;justify-contentflex-end;gap16px;margin-top10px;padding-top10px;border-top1px solid #ddd;font-size13px;}
+.kiki-tbl-foot .foot-label{color#888;}
+.kiki-tbl-foot .foot-val{font-size15px;font-weight700;color#1a6b2e;}
+.kiki-empty{padding24px;text-aligncenter;color#bbb;font-size13px;}
+
+.estimate-cols{displaygrid;grid-template-columns1fr;gap12px;margin-bottom12px;}
+@media(min-width1024px){
+  .estimate-cols{grid-template-columns1fr 1fr;}
 }
-html,body{height:100%;width:100%;overflow-x:hidden;}
-body{font-family:'Noto Sans JP',sans-serif;background:var(--gray-bg);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+.estimate-col{background#fff;border1px solid #ddd;border-radius10px;padding16px;}
+.estimate-col.ref{border-top3px solid #EF9F27;}
+.estimate-col.main{border-top3px solid #1D9E75;}
+.col-header{displayflex;align-itemscenter;justify-contentspace-between;margin-bottom12px;gap8px;}
+.col-label{font-size14px;font-weight700;}
+.col-label.ref{color#854F0B;}
+.col-label.main{color#0F6E56;}
 
-/* ===== ログイン前オーバーレイ ===== */
-#authOverlay{position:fixed;inset:0;background:linear-gradient(135deg,#0F6E56 0%,#1D9E75 60%,#2bb890 100%);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;}
-#authOverlay .logo{width:64px;height:64px;background:#fff;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:var(--green-main);margin-bottom:20px;}
-#authOverlay h1{color:#fff;font-size:24px;font-weight:900;margin-bottom:6px;}
-#authOverlay .sub{color:rgba(255,255,255,.85);font-size:13px;margin-bottom:36px;}
-#g_id_signin_container{margin-bottom:16px;}
-#authError{color:#ffdcdc;font-size:13px;margin-top:14px;display:none;max-width:340px;line-height:1.7;background:rgba(0,0,0,.15);border-radius:10px;padding:12px 16px;}
-#authRequestLink{color:#fff;font-size:13px;text-decoration:underline;cursor:pointer;margin-top:24px;opacity:.9;}
-#authRequestLink:hover{opacity:1;}
-.auth-card{background:#fff;border-radius:16px;padding:28px 26px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.25);display:none;text-align:left;}
-.auth-card.show{display:block;}
-.auth-card h2{font-size:16px;font-weight:700;margin-bottom:6px;color:var(--text-main);}
-.auth-card .desc{font-size:12px;color:var(--text-sub);margin-bottom:18px;line-height:1.6;}
-.auth-card .field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
-.auth-card .field label{font-size:12px;font-weight:600;color:var(--text-sub);}
-.auth-card .field input{border:1px solid var(--gray-border);border-radius:8px;padding:10px 12px;font-size:14px;}
-.auth-card .field input[readonly]{background:#f5f6f8;color:#888;}
-.auth-card .actions{display:flex;gap:8px;margin-top:18px;}
-.auth-card .actions button{flex:1;padding:10px;border-radius:8px;border:none;font-size:13px;font-weight:700;cursor:pointer;}
-.auth-card .actions .cancel{background:var(--gray-bg);color:var(--text-sub);}
-.auth-card .actions .submit{background:var(--green-main);color:#fff;}
-.auth-card .actions .submit:hover{background:var(--green-dark);}
-.auth-loading{color:rgba(255,255,255,.85);font-size:13px;}
+.sync-bar{displayflex;align-itemscenter;gap8px;padding8px 12px;border1px solid #a8d5b5;border-radius8px;margin-bottom10px;font-size13px;}
+.sync-hint{font-size11px;color#888;}
 
-/* ===== ヘッダー ===== */
-.header{background:#fff;border-bottom:3px solid var(--green-main);padding:0 32px;height:72px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm);}
-.header-left{display:flex;align-items:center;gap:12px;}
-.logo-mark{width:42px;height:42px;background:var(--green-main);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;flex-shrink:0;}
-.company-name{font-size:16px;font-weight:700;line-height:1.2;}
-.company-name span{display:block;font-size:11px;font-weight:500;color:var(--text-sub);letter-spacing:.05em;}
-.header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.user-badge{font-size:14px;color:var(--text-sub);background:var(--gray-bg);padding:6px 14px;border-radius:20px;white-space:nowrap;}
-.rank-badge{font-size:13px;font-weight:700;padding:5px 12px;border-radius:20px;white-space:nowrap;}
-.rank-badge.admin{background:#FEF3C7;color:#854F0B;}
-.rank-badge.manager{background:#e8f3fc;color:#185FA5;}
-.rank-badge.user{background:var(--green-light);color:var(--green-dark);}
-.hd-btn{padding:9px 16px;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .15s;color:#fff;white-space:nowrap;}
-.hd-btn.green{background:var(--green-main);} .hd-btn.green:hover{background:var(--green-dark);}
-.hd-btn.amber{background:var(--amber);}      .hd-btn.amber:hover{background:#b87009;}
-.hd-btn.gray{background:#888;} .hd-btn.gray:hover{background:#666;}
+.items-wrap{width100%;overflow-xauto;-webkit-overflow-scrollingtouch;}
+table.items{width100%;min-width600px;border-collapsecollapse;font-size13px;table-layoutfixed;}
+table.items th{font-size11px;font-weight700;color#555;padding7px 6px;text-alignleft;border-bottom1px solid #ddd;background#f8f8f6;white-spacenowrap;overflowhidden;}
+table.items td{padding4px 2px;vertical-alignmiddle;overflowvisible;}
 
-/* ===== ヒーロー ===== */
-.hero{background:linear-gradient(135deg,var(--green-dark) 0%,var(--green-main) 60%,#2bb890 100%);padding:40px 32px;position:relative;overflow:hidden;}
-.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");}
-.hero-inner{max-width:900px;margin:0 auto;position:relative;}
-.hero-title{font-size:28px;font-weight:900;color:#fff;margin-bottom:6px;}
-.hero-title span{color:rgba(255,255,255,.75);font-weight:400;font-size:15px;display:block;margin-bottom:4px;}
-.hero-desc{font-size:14px;color:rgba(255,255,255,.85);line-height:1.7;}
+.col-drag{width20px;}
+.col-no{width28px;}
+.col-vis{width34px;}
+.col-name{widthauto;min-width180px;}
+.col-qty{width65px;}
+.col-unit{width50px;}
+.col-price{width90px;}
+.col-amt{width100px;}
+.col-del{width24px;}
 
-/* ===== メイン ===== */
-.main{flex:1;width:100%;max-width:900px;margin:0 auto;padding:32px 24px 80px;}
-.section-label{font-size:13px;font-weight:700;color:var(--text-sub);letter-spacing:.06em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
-.section-label-left{display:flex;align-items:center;gap:8px;}
-.section-line{flex:1;height:1px;background:var(--gray-border);}
-.admin-mode-bar{background:#FEF3C7;border:1px solid #EF9F27;border-radius:10px;padding:14px 20px;margin-bottom:24px;font-size:14px;color:#854F0B;display:none;align-items:center;justify-content:space-between;gap:10px;}
-.admin-mode-bar.show{display:flex;}
-.admin-add-btn{display:none;padding:7px 14px;border:1px solid var(--green-main);border-radius:7px;font-size:13px;font-weight:700;color:var(--green-main);background:#fff;cursor:pointer;white-space:nowrap;}
-.admin-add-btn:hover{background:var(--green-light);}
-.admin-mode .admin-add-btn{display:inline-flex;align-items:center;gap:3px;}
-.list-container{display:flex;flex-direction:column;gap:10px;margin-bottom:32px;}
-.list-loading{background:var(--gray-card);border:1px solid var(--gray-border);border-radius:14px;padding:24px 22px;display:flex;align-items:center;gap:12px;font-size:13px;color:var(--text-sub);}
-.spinner{width:18px;height:18px;border:2px solid #ddd;border-top-color:var(--green-main);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.list-item{background:var(--gray-card);border:1px solid var(--gray-border);border-radius:14px;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;text-decoration:none;transition:background .15s,border-color .15s;box-shadow:var(--shadow-sm);}
-.list-item:hover:not(.locked){background:#f8fbff;border-color:var(--green-main);}
-.list-item.locked{opacity:.5;pointer-events:none;background:#fafafa;}
-.list-item-left{display:flex;align-items:center;gap:18px;flex:1;min-width:0;}
-.list-icon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;}
-.list-icon.green{background:var(--green-light);}
-.list-icon.amber{background:var(--amber-light);}
-.list-icon.blue{background:#e8f3fc;}
-.list-icon.gray{background:#f4f4f0;}
-.list-icon.red{background:#fce8e6;}
-.list-icon.purple{background:#f3e8ff;}
-.list-text{flex:1;overflow:hidden;}
-.list-title{font-size:16px;font-weight:700;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:8px;}
-.list-desc{font-size:13px;color:var(--text-sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px;}
-.list-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
-.list-arrow{color:#ccc;font-size:20px;font-weight:700;}
-.admin-mode .list-arrow{display:none;}
-.badge-sm{font-size:11px;font-weight:700;border-radius:4px;padding:3px 8px;white-space:nowrap;}
-.badge-coming{background:#f0f0eb;color:#888;}
-.badge-locked{background:#ddd;color:#666;}
-.list-edit-btns{display:none;gap:6px;}
-.admin-mode .list-edit-btns{display:flex;}
-.list-edit-btn{padding:8px 14px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;white-space:nowrap;}
-.list-edit-btn.edit{background:#e8f3fc;color:#185FA5;}
-.list-edit-btn.edit:hover{background:#378ADD;color:#fff;}
-.list-edit-btn.del{background:#fce8e6;color:#c0392b;}
-.list-edit-btn.del:hover{background:#c0392b;color:#fff;}
-.notice-item{background:#fff;border:1px solid var(--gray-border);border-left:5px solid var(--amber);border-radius:14px;padding:18px 22px;box-shadow:var(--shadow-sm);display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:10px;}
-.notice-content{display:flex;align-items:flex-start;gap:10px;flex:1;min-width:0;}
-.notice-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
-.notice-text{font-size:15px;line-height:1.7;word-break:break-word;}
-.notice-edit-btns{display:none;gap:6px;flex-shrink:0;}
-.admin-mode .notice-edit-btns{display:flex;}
-.notice-empty{padding:16px 20px;color:#888;font-size:14px;background:#fff;border:1px dashed var(--gray-border);border-radius:14px;margin-bottom:10px;}
-.notice-loading{padding:16px 20px;color:#888;font-size:14px;display:flex;align-items:center;gap:10px;background:#fff;border:1px dashed var(--gray-border);border-radius:14px;margin-bottom:10px;}
+table.items td input{width100%;backgroundtransparent;border1px solid transparent;border-radius5px;padding5px 4px;font-size13px;color#222;}
+table.items td inputfocus{background#f6fef9;border-color#1D9E75;outlinenone;box-shadow0 0 0 2px rgba(29,158,117,.18);}
 
-/* ===== モーダル ===== */
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;padding:16px;}
-.modal-bg.open{display:flex;}
-.modal{background:#fff;border-radius:16px;width:100%;max-width:480px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.2);}
-.modal-header{padding:18px 20px;border-bottom:1px solid var(--gray-border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-.modal-header h2{font-size:15px;font-weight:700;}
-.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:#888;padding:2px 7px;border-radius:6px;line-height:1;}
-.modal-close:hover{background:var(--gray-bg);}
-.modal-body{padding:20px;overflow-y:auto;flex:1;}
-.modal-footer{padding:14px 20px;border-top:1px solid var(--gray-border);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0;}
-.modal-footer.between{justify-content:space-between;}
-.form-field{display:flex;flex-direction:column;gap:5px;margin-bottom:13px;}
-.form-field label{font-size:12px;font-weight:600;color:var(--text-sub);}
-.form-field input,.form-field select,.form-field textarea{border:1px solid var(--gray-border);border-radius:8px;padding:9px 11px;font-size:13px;color:var(--text-main);background:#fff;width:100%;font-family:inherit;}
-.form-field input:focus,.form-field select:focus,.form-field textarea:focus{outline:none;border-color:var(--green-main);}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.btn{padding:9px 17px;border:1px solid var(--gray-border);border-radius:8px;background:#fff;font-size:13px;cursor:pointer;font-weight:600;}
-.btn:hover{background:var(--gray-bg);}
-.btn-green{border:none;background:var(--green-main);color:#fff;} .btn-green:hover{background:var(--green-dark);}
-.btn-red{border:none;background:#fce8e6;color:#c0392b;border:1px solid #f5c6cb;} .btn-red:hover{background:#c0392b;color:#fff;}
-.modal-lg{max-width:640px;}
-.add-form{background:var(--gray-bg);border-radius:10px;padding:14px;margin-bottom:20px;display:grid;grid-template-columns:1fr 100px 120px 120px auto;gap:8px;align-items:end;}
-.add-form .field{display:flex;flex-direction:column;gap:4px;}
-.add-form label{font-size:11px;font-weight:600;color:var(--text-sub);}
-.add-form input,.add-form select{border:1px solid var(--gray-border);border-radius:7px;padding:8px 10px;font-size:13px;color:var(--text-main);background:#fff;width:100%;}
-.add-form input:focus,.add-form select:focus{outline:none;border-color:var(--green-main);}
-.user-table{width:100%;border-collapse:collapse;font-size:13px;}
-.user-table th{font-size:11px;font-weight:700;color:var(--text-sub);padding:8px 10px;text-align:left;border-bottom:2px solid var(--gray-border);background:var(--gray-bg);}
-.user-table td{padding:9px 10px;border-bottom:1px solid var(--gray-border);vertical-align:middle;}
-.user-table tr:last-child td{border-bottom:none;}
-.user-table tr:hover td{background:#f8fbff;}
-.rank-sel{border:1px solid var(--gray-border);border-radius:5px;padding:4px 8px;font-size:12px;background:#fff;cursor:pointer;}
-.rank-sel:focus{outline:none;border-color:var(--green-main);}
-.btn-sm{padding:6px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:none;color:#fff;}
-.btn-sm-del{background:none;border:1px solid #f5c6cb;border-radius:5px;padding:4px 10px;font-size:12px;color:#c0392b;cursor:pointer;}
-.btn-sm-del:hover{background:#fce8e6;}
-.empty-msg{text-align:center;color:var(--text-sub);padding:24px;font-size:13px;}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:10px 22px;border-radius:8px;font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,.14);opacity:0;transition:opacity .3s;pointer-events:none;z-index:9999;white-space:nowrap;}
-.toast.show{opacity:1;}
-.toast.success{background:#1a6b2e;color:#fff;}
-.toast.error{background:#9b2a1e;color:#fff;}
-.toast.info{background:#185FA5;color:#fff;}
-.footer{background:#fff;border-top:1px solid var(--gray-border);padding:16px 32px;font-size:13px;color:var(--text-sub);text-align:center;}
+table.items td.bg-a{background#fff9f0;}
+table.items td.bg-b{background#f0f7ff;}
 
-@media(max-width:600px){
-  .header{padding:0 12px;height:auto;min-height:64px;flex-wrap:wrap;gap:8px;padding-top:8px;padding-bottom:8px;}
-  .header-right{justify-content:flex-end;width:100%;}
-  .main{padding:16px 10px 60px;}
-  .add-form{grid-template-columns:1fr !important;gap:10px;}
-  .form-row{grid-template-columns:1fr;}
-  .company-name span{display:none;}
-  .modal-lg{max-width:100vw;margin:4px;}
-  .user-table{font-size:12px;}
-  .user-table th,.user-table td{padding:6px 5px;}
-  .hd-btn,.btn,.list-edit-btn{min-height:44px;min-width:44px;font-size:14px;}
-  .rank-sel{min-height:36px;font-size:13px;}
-  .btn-sm-del{min-height:36px;font-size:13px;padding:6px 12px;}
-  .list-item{padding:14px 16px;}
-  .list-icon{width:48px;height:48px;font-size:24px;}
-  .list-title{font-size:15px;}
-  .notice-text{font-size:14px;}
+tbody.item-tbody{border-bottom2px solid #ccc;transitionbackground-color 0.15s;}
+tbody.item-tbodyhover{background#f8fbff;}
+tbody.item-tbody trfirst-child td{border-bottom1px dashed #e0e0db;}
+tbody.item-tbody trlast-child td{border-bottomnone;}
+tbody.item-tbody.dragging{opacity.35;background#e8f4fd;}
+tbody.item-tbody.drag-over{border-top3px solid #378ADD;}
+tbody.item-tbody.row-hidden{background#fafafa;}
+tbody.item-tbody.row-hidden td input{color#ccc;text-decorationline-through;}
+tbody.item-tbody.row-hidden td.amt{color#ccc;}
+tbody.item-tbody.row-horitsu{background#fffbeb;}
+tbody.item-tbody.row-horitsu td.amt{color#854F0B;}
+tbody.item-tbody.row-discount td input{color#c0392b;}
+tbody.item-tbody.row-discount td.amt{color#c0392b;}
+
+td.dh{cursorgrab;color#ccc;text-aligncenter;padding4px 2px;font-size16px;user-selectnone;}
+td.dhactive{cursorgrabbing;}
+td.vt{text-aligncenter;padding2px 2px;}
+
+.vis-btn{cursorpointer;font-size11px;font-weight600;padding3px 8px;border-radius5px;line-height1;white-spacenowrap;transitionall .15s;}
+.vis-btn.visible{background#e6f4ea;border1px solid #a8d5b5;color#0F6E56;}
+.vis-btn.visiblehover{background#c8ebd4;}
+.vis-btn.hidden{background#f4f4f0;border1px solid #ccc;color#aaa;}
+.vis-btn.hiddenhover{background#e8e8e4;color#666;}
+
+.horitsu-amt-btn{width100%;backgroundtransparent;border1px solid transparent;border-radius5px;padding5px 7px;font-size13px;color#854F0B;font-weight600;text-alignright;cursorpointer;white-spacenowrap;}
+.horitsu-amt-btnhover{background#FEF3C7;border-color#EF9F27;}
+
+.del-btn{backgroundnone;bordernone;cursorpointer;color#ddd;font-size13px;padding3px 2px;border-radius4px;line-height1;}
+.del-btnhover{background#fce8e6;color#c0392b;}
+
+.th-btn{font-size10px;color#378ADD;padding1px 6px;border1px solid #b5d4f4;border-radius3px;background#f0f8ff;cursorpointer;font-weight400;}
+
+.ac-wrap{positionrelative;width100%;}
+.ac-wrap input{width100%;}
+.ac-list{displaynone;positionfixed;background#fff;border1px solid #ddd;border-radius6px;box-shadow0 6px 20px rgba(0,0,0,.16);z-index2000;max-height240px;overflow-yauto;min-width180px;}
+.ac-list.show{displayblock;}
+.ac-item{padding8px 11px;font-size13px;cursorpointer;border-bottom1px solid #f5f5f5;displayflex;align-itemscenter;justify-contentspace-between;gap6px;}
+.ac-itemlast-child{border-bottomnone;}
+.ac-itemhover,.ac-item.active{background#e8f3fc;}
+.ac-item-text{flex1;overflowhidden;text-overflowellipsis;white-spacenowrap;}
+
+.add-row-btn{width100%;margin-top8px;padding9px;backgroundtransparent;border1px dashed #ccc;border-radius7px;font-size13px;color#888;cursorpointer;transitionall .15s;}
+.add-row-btnhover{background#f6fef9;border-color#1D9E75;color#1D9E75;}
+.add-disc-btn{width100%;margin-top4px;padding7px;backgroundtransparent;border1px dashed #f5c6cb;border-radius7px;font-size12px;color#c0392b;cursorpointer;transitionall .15s;}
+.add-disc-btnhover{background#fce8e6;border-color#c0392b;}
+
+.col-summary{margin-top10px;}
+.col-summary table{width100%;font-size13px;}
+.col-summary td{padding4px 8px;}
+.col-summary tdlast-child{text-alignright;font-weight600;}
+.col-summary tr.total td{font-size15px;border-top1px solid #ddd;padding-top8px;}
+.col-summary td.lbl{color#888;font-weight400;}
+.col-summary td.disc-lbl{color#c0392b;font-weight400;}
+.col-summary td.disc-val{color#c0392b;font-weight600;}
+.action-bar{displayflex;gap10px;justify-contentflex-end;padding-top4px;flex-wrapwrap;}
+
+.modal-bg{displaynone;positionfixed;inset0;backgroundrgba(0,0,0,.45);z-index600;align-itemscenter;justify-contentcenter;}
+.modal-bg.open{displayflex;}
+.modal{background#fff;border-radius12px;padding24px 26px;width460px;max-width95vw;box-shadow0 8px 32px rgba(0,0,0,.18);}
+.modal h3{font-size15px;font-weight700;margin-bottom16px;}
+.modal-field{displayflex;flex-directioncolumn;gap4px;margin-bottom12px;}
+.modal-field label{font-size11px;color#777;font-weight600;}
+.modal-field input,.modal-field select,.modal-field textarea{border1px solid #ddd;border-radius6px;padding7px 10px;font-size13px;color#222;background#f8f8f8;}
+.modal-field inputfocus,.modal-field selectfocus,.modal-field textareafocus{outlinenone;border-color#1D9E75;background#fff;}
+.modal-field small{font-size11px;color#aaa;}
+.modal-actions{displayflex;gap10px;justify-contentflex-end;margin-top16px;}
+.m-cancel{backgroundnone;border1px solid #ddd;border-radius7px;padding7px 17px;font-size13px;cursorpointer;}
+.m-ok{bordernone;border-radius7px;padding7px 19px;font-size13px;color#fff;cursorpointer;font-weight600;}
+.m-ok.green{background#1D9E75;} .m-ok.greenhover{background#0F6E56;}
+.m-ok.blue{background#378ADD;} .m-ok.bluehover{background#185FA5;}
+.m-ok.amber{background#EF9F27;} .m-ok.amberhover{background#b87009;}
+.m-okdisabled{background#aaa;cursornot-allowed;}
+
+.save-mode-select{displayflex;flex-directioncolumn;gap8px;margin-bottom14px;}
+.save-mode-opt{displayflex;align-itemsflex-start;gap10px;padding10px 14px;border1px solid #e0e0db;border-radius9px;cursorpointer;transitionall .15s;}
+.save-mode-opthover{background#f4f8ff;border-color#378ADD;}
+.save-mode-opt.selected{background#e8f3fc;border-color#378ADD;border-width2px;}
+.save-mode-opt input[type=radio]{margin-top2px;accent-color#378ADD;flex-shrink0;}
+.save-mode-opt-title{font-size13px;font-weight700;margin-bottom2px;}
+.save-mode-opt-desc{font-size11px;color#888;}
+.notify-block{background#fffbeb;border1px solid #EF9F27;border-radius8px;padding10px 14px;margin-top4px;}
+.notify-block label{font-size12px;font-weight700;color#854F0B;displayblock;margin-bottom6px;}
+.notify-block select{width100%;border1px solid #e0c840;border-radius6px;padding7px 10px;font-size13px;color#222;background#fff;}
+.notify-block selectfocus{outlinenone;border-color#EF9F27;}
+.notify-block small{font-size11px;color#a08000;displayblock;margin-top4px;}
+
+.no-preview-box{font-size15px;font-weight700;color#1D9E75;padding10px 14px;background#e6f4ea;border-radius8px;letter-spacing.05em;min-height40px;displayflex;align-itemscenter;font-familymonospace;}
+.abbr-error{color#c0392b;font-size12px;displaynone;margin-top4px;}
+
+.print-options{displayflex;flex-directioncolumn;gap9px;margin12px 0;}
+.print-opt{displayflex;align-itemscenter;gap12px;padding12px 14px;border1px solid #e0e0db;border-radius9px;cursorpointer;transitionall .15s;}
+.print-opthover{background#f4f8ff;border-color#378ADD;}
+.print-opt.selected{background#e8f3fc;border-color#378ADD;border-width2px;}
+.print-opt input[type=radio]{width15px;height15px;accent-color#378ADD;cursorpointer;flex-shrink0;}
+.print-opt-title{font-size13px;font-weight600;color#222;margin-bottom2px;}
+.print-opt-desc{font-size11px;color#888;}
+
+.list-modal{width540px;max-height90vh;overflow-yauto;}
+.list-modal h3{margin-bottom6px;}
+.list-modal .sub{font-size12px;color#888;margin-bottom14px;}
+.list-items{max-height320px;overflow-yauto;border1px solid #ddd;border-radius8px;margin-bottom12px;}
+.list-item{displayflex;align-itemscenter;gap6px;padding6px 10px;border-bottom1px solid #f0f0eb;}
+.list-itemlast-child{border-bottomnone;}
+.list-item input[type=text],.list-item input[type=email]{flex1;border1px solid #ddd;border-radius5px;padding6px 9px;font-size13px;color#222;}
+.list-item input[type=number]{width110px;border1px solid #ddd;border-radius5px;padding6px 9px;font-size13px;color#222;text-alignright;}
+.list-item inputfocus{outlinenone;border-color#1D9E75;}
+.list-item-del{backgroundnone;bordernone;cursorpointer;color#ddd;font-size14px;padding3px 6px;border-radius4px;}
+.list-item-delhover{background#fce8e6;color#c0392b;}
+.list-item-lock{backgroundnone;bordernone;cursorpointer;font-size14px;padding3px 6px;border-radius4px;color#aaa;}
+.list-item-lockhover{background#fffbeb;color#EF9F27;}
+.list-item-lock.locked{color#EF9F27;}
+.list-add-row{displayflex;gap8px;margin-bottom4px;flex-wrapwrap;}
+.list-add-input{flex1;min-width120px;border1px solid #ddd;border-radius6px;padding7px 10px;font-size13px;color#222;}
+.list-add-inputfocus{outlinenone;border-color#1D9E75;}
+.list-add-price{width110px;border1px solid #ddd;border-radius6px;padding7px 10px;font-size13px;color#222;text-alignright;}
+.list-add-pricefocus{outlinenone;border-color#1D9E75;}
+.list-add-btn{padding7px 14px;bordernone;border-radius6px;background#1D9E75;color#fff;font-size13px;font-weight600;cursorpointer;white-spacenowrap;}
+.list-add-btnhover{background#0F6E56;}
+
+.horitsu-modal{width560px;max-height92vh;overflow-yauto;}
+.horitsu-tabs{displayflex;gap4px;margin-bottom14px;border-bottom2px solid #f0f0eb;padding-bottom0;}
+.horitsu-tab{padding7px 16px;font-size13px;font-weight600;cursorpointer;bordernone;backgroundnone;color#888;border-bottom2px solid transparent;margin-bottom-2px;border-radius6px 6px 0 0;}
+.horitsu-tab.active{color#854F0B;border-bottom-color#EF9F27;background#fffbeb;}
+.horitsu-tabhover{background#fffbeb;}
+.horitsu-panel{displaynone;}
+.horitsu-panel.active{displayblock;}
+.horitsu-input-group{background#fffbeb;border1px solid #EF9F27;border-radius8px;padding12px 14px;margin-bottom12px;}
+.horitsu-input-group label{font-size11px;color#7a6000;font-weight700;margin-bottom5px;displayblock;}
+.horitsu-input-group input[type=number]{width100%;border1px solid #e0c840;border-radius6px;padding8px 11px;font-size15px;color#222;background#fff;}
+.horitsu-input-group inputfocus{outlinenone;border-color#EF9F27;}
+.horitsu-rates-box{background#f8f8f6;border1px solid #e0e0db;border-radius8px;padding12px 14px;margin-bottom12px;}
+.horitsu-rates-box .box-title{font-size11px;font-weight700;color#888;margin-bottom10px;}
+.horitsu-rate-row{displaygrid;grid-template-columns1fr 100px;gap8px;align-itemscenter;margin-bottom7px;}
+.horitsu-rate-row label{font-size12px;color#444;}
+.horitsu-rate-row input[type=number]{border1px solid #ddd;border-radius5px;padding5px 8px;font-size13px;text-alignright;color#222;background#fff;width100%;}
+.horitsu-rate-row inputfocus{outlinenone;border-color#EF9F27;}
+.horitsu-result-box{background#FEF3C7;border1px solid #EF9F27;border-radius8px;padding12px 16px;margin-bottom4px;displayflex;align-itemscenter;justify-contentspace-between;}
+.horitsu-result-box .result-label{font-size12px;color#7a6000;font-weight600;}
+.horitsu-result-box .result-amt{font-size20px;font-weight700;color#854F0B;}
+.horitsu-breakdown{margin-top8px;font-size11px;color#888;}
+.horitsu-formula{background#fffbeb;border1px solid #EF9F27;border-radius8px;padding12px 14px;margin-bottom14px;}
+.horitsu-formula label{font-size11px;color#7a6000;font-weight700;margin-bottom6px;displayblock;}
+.horitsu-formula input{width100%;border1px solid #e0c840;border-radius6px;padding8px 11px;font-size14px;color#222;background#fff;}
+.horitsu-formula inputfocus{outlinenone;border-color#EF9F27;}
+.horitsu-preview{font-size13px;color#555;margin-top8px;}
+.horitsu-preview span{font-weight700;color#854F0B;font-size16px;}
+.horitsu-error{color#c0392b;font-size12px;margin-top4px;}
+.rate-badge{displayinline-block;font-size10px;background#FEF3C7;color#854F0B;border1px solid #EF9F27;border-radius3px;padding1px 5px;margin-left4px;vertical-alignmiddle;}
+
+.tpl-bar{background#f8f8f6;border1px solid #e0e0db;border-radius10px;padding10px 14px;margin-bottom12px;displayflex;align-itemscenter;gap10px;flex-wrapwrap;}
+.tpl-bar-label{font-size11px;font-weight700;color#888;white-spacenowrap;}
+.tpl-chips{displayflex;gap6px;flex-wrapwrap;flex1;}
+.tpl-chip{padding5px 12px;border-radius20px;font-size12px;border1px solid #ddd;background#fff;cursorpointer;color#444;white-spacenowrap;transitionall .15s;}
+.tpl-chiphover{border-color#1D9E75;color#1D9E75;}
+.tpl-chip.active{background#e6f4ea;border-color#1D9E75;color#0F6E56;font-weight700;}
+.tpl-manage-btn{font-size11px;padding5px 11px;border-radius6px;border1px solid #ddd;background#fff;cursorpointer;color#555;white-spacenowrap;}
+.tpl-manage-btnhover{background#f0f0eb;}
+.tpl-table{width100%;border-collapsecollapse;font-size13px;}
+.tpl-table th{font-size11px;font-weight700;color#888;padding7px 10px;text-alignleft;border-bottom2px solid #eee;background#f8f8f6;}
+.tpl-table td{padding9px 10px;border-bottom1px solid #f0f0eb;vertical-alignmiddle;}
+.tpl-table trhover td{background#f8fbff;}
+.tag{font-size10px;padding2px 8px;border-radius12px;font-weight700;}
+.tag-green{background#e6f4ea;color#0F6E56;}
+.tag-amber{background#fffbeb;color#854F0B;}
+
+.toast{positionfixed;bottom24px;left50%;transformtranslateX(-50%);padding10px 22px;border-radius8px;font-size13px;box-shadow0 4px 16px rgba(0,0,0,.14);opacity0;transitionopacity .3s;pointer-eventsnone;z-index999;white-spacenowrap;}
+.toast.show{opacity1;}
+.toast.success{background#1a6b2e;color#fff;}
+.toast.error{background#9b2a1e;color#fff;}
+.toast.info{background#185FA5;color#fff;}
+
+.list-item-drag{cursorgrab;color#ccc;font-size16px;padding0 4px;user-selectnone;flex-shrink0;}
+.list-item-dragactive{cursorgrabbing;}
+.list-item.dragging-row{opacity.35;background#e8f4fd;}
+.list-item.drag-over-row{border-top2px solid #378ADD;}
+.li-unit{width80px;border1px solid #ddd;border-radius5px;padding6px 8px;font-size13px;color#222;}
+.li-unitfocus{outlinenone;border-color#1D9E75;}
+.list-item-header{displayflex;gap6px;padding4px 10px 4px 36px;font-size11px;font-weight700;color#888;border-bottom1px solid #f0f0eb;}
+.li-h-name{flex1;}.li-h-unit{width80px;}.li-h-act{width28px;}
+.list-add-row-ext{displayflex;gap8px;margin-bottom4px;flex-wrapwrap;align-itemsflex-end;}
+.list-add-row-ext .list-add-input{flex1;min-width100px;}
+.list-add-row-ext .li-add-unit{width80px;border1px solid #ddd;border-radius6px;padding7px 10px;font-size13px;color#222;}
+.list-add-row-ext .li-add-unitfocus{outlinenone;border-color#1D9E75;}
+
+.kiki-add-modal{width460px;}
+.mode-radio-group{displayflex;gap10px;margin-bottom14px;}
+.mode-radio-opt{flex1;displayflex;align-itemscenter;gap8px;padding10px 14px;border1px solid #ddd;border-radius8px;cursorpointer;transitionall .15s;}
+.mode-radio-opthover{border-color#378ADD;background#f4f8ff;}
+.mode-radio-opt.selected{border-color#378ADD;border-width2px;background#e8f3fc;}
+.mode-radio-opt input[type=radio]{accent-color#378ADD;}
+.mode-radio-opt-label{font-size13px;font-weight600;}
+.kiki-calc-preview{background#f0fdf4;border1px solid #a8d5b5;border-radius8px;padding10px 14px;margin-top8px;font-size13px;color#0F6E56;font-weight700;text-alignright;min-height38px;}
+
+@media(max-width1200px){
+  .grid-2{grid-template-columns1fr;}
+  .action-bar{justify-contentstretch;}
+  .action-bar .btn{flex1;text-aligncenter;}
 }
-@media(max-width:400px){
-  .header-left{gap:8px;}
-  .logo-mark{width:36px;height:36px;font-size:18px;border-radius:8px;}
-  .company-name{font-size:14px;}
+@media(max-width480px){
+  .btn,.btn-sm,.btn-exec,.m-ok,.m-cancel{min-height44px;font-size14px;}
+  .add-row-btn,.add-disc-btn{min-height44px;font-size14px;}
+  .kiki-item{padding10px 14px;}
+  .field label{font-size13px;}
+  .field input,.field textarea{font-size15px;padding10px 12px;}
+  .items-wrapafter{content'← 横にスクロールできます →';displayblock;font-size11px;color#aaa;text-aligncenter;padding6px 0 2px;}
+  .no-gen-wrap{flex-wrapwrap;}
+  .abbr-wrap input{width100px;}
 }
-</style>
-</head>
-<body>
+style
+head
+body
 
-<!-- ============ ログイン前オーバーレイ ============ -->
-<div id="authOverlay">
-  <div id="authLoginView">
-    <div class="logo">山</div>
-    <h1>業務ポータル</h1>
-    <div class="sub">山陽チップ工業株式会社</div>
-    <div id="g_id_signin_container"></div>
-    <div id="authError"></div>
-    <div id="authRequestLink" onclick="showRequestCard()">アカウントをお持ちでない方はこちら（利用申請）</div>
-  </div>
+div class=app-header
+  div class=hd-left
+    a href=# onclick=goPortal() style=displayinline-flex;align-itemscenter;gap5px;font-size12px;color#1D9E75;font-weight700;text-decorationnone;background#e6f4ea;padding5px 11px;border-radius7px;margin-right10px;transitionbackground .15s; onmouseover=this.style.background='#c8ebd4' onmouseout=this.style.background='#e6f4ea'&#8592; 業務ポータルa
+    h1見積書作成システムh1
+    span class=company-tag山陽チップ工業株式会社span
+  div
+  div class=hd-right
+    button class=btn onclick=openTemplateManageModal()&#128196; テンプレート管理button
+    button class=btn onclick=openDrawer()&#128269; 過去データ検索button
+    button class=btn btn-red onclick=confirmAllClear()&#10006; オールクリアbutton
+  div
+div
 
-  <div class="auth-card" id="requestCard">
-    <h2>📝 利用申請</h2>
-    <div class="desc">Googleアカウントでログイン済みの状態で申請してください。管理者が確認のうえ、登録します。</div>
-    <div class="field">
-      <label>メールアドレス</label>
-      <input type="email" id="reqEmail" readonly>
-    </div>
-    <div class="field">
-      <label>お名前</label>
-      <input type="text" id="reqName" placeholder="山田 太郎">
-    </div>
-    <div class="actions">
-      <button class="cancel" onclick="hideRequestCard()">戻る</button>
-      <button class="submit" onclick="submitRequest()">申請する</button>
-    </div>
-  </div>
-</div>
+!-- 検索モーダル --
+div class=modal-bg id=searchModal
+  div class=modal search-modal
+    h3&#128269; 過去の見積書を検索h3
+    div class=s-row
+      input type=text id=s_keyword placeholder=工事名・会社名・見積番号 onkeydown=if(event.key==='Enter')execSearch()
+      button class=btn-exec id=searchBtn onclick=execSearch()検索button
+    div
+    div class=s-row2
+      input type=date id=s_dateFrom
+      input type=date id=s_dateTo
+    div
+    div class=s-status-row
+      span style=font-size12px;color#888;align-selfcenter;ステータス：span
+      button class=s-status-btn active onclick=setStatusFilter(this,'')すべてbutton
+      button class=s-status-btn onclick=setStatusFilter(this,'draft')🟡 参考見積（未確定）button
+      button class=s-status-btn onclick=setStatusFilter(this,'confirmed')🟢 本見積（確定済）button
+    div
+    div id=resultCount class=result-countdiv
+    div class=search-results id=drawerResults
+      div class=result-emptyキーワードを入力して「検索」を押してくださいdiv
+    div
+    div class=modal-actions style=margin-top12px;
+      button class=m-cancel onclick=closeModal('searchModal')閉じるbutton
+    div
+  div
+div
 
-<div class="app-body" id="appBody" style="display:none;">
+!-- 保存モーダル --
+div class=modal-bg id=saveModal
+  div class=modal style=width500px;
+    h3&#128196; Google Drive への保存h3
+    div class=save-mode-select
+      label class=save-mode-opt selected
+        input type=radio name=saveMode value=draft checked onchange=onSaveModeChange(this)
+        div
+          div class=save-mode-opt-title🟡 一時保存（参考見積）div
+          div class=save-mode-opt-desc参考見積を保存。メールで通知します。div
+        div
+      label
+      label class=save-mode-opt
+        input type=radio name=saveMode value=confirmed onchange=onSaveModeChange(this)
+        div
+          div class=save-mode-opt-title🟢 確定保存（本見積）div
+          div class=save-mode-opt-desc本見積を完成させて確定保存します。div
+        div
+      label
+    div
+    div class=notify-block id=notifyBlock
+      label📧 通知先メールアドレス
+        button type=button onclick=openEmailListModal() style=font-size11px;color#854F0B;padding2px 8px;border1px solid #EF9F27;border-radius4px;background#fffbeb;cursorpointer;margin-left8px;font-weight600;✎ リストを編集button
+      label
+      select id=notifyEmailoption value=— 送信しない —optionselect
+      small保存完了後に参考見積作成の通知メールを送信しますsmall
+    div
+    div class=modal-field style=margin-top12px;
+      label保存先スプレッドシートlabel
+      input readonly value=見積書データ（山陽チップ工業）
+    div
+    div class=modal-actions
+      button class=m-cancel onclick=closeModal('saveModal')キャンセルbutton
+      button class=m-ok green onclick=doSave()保存するbutton
+    div
+  div
+div
 
-<header class="header">
-  <div class="header-left">
-    <div class="logo-mark">山</div>
-    <div class="company-name">山陽チップ工業株式会社<span>SANYO CHIP KOGYO CO., LTD.</span></div>
-  </div>
-  <div class="header-right">
-    <span class="user-badge" id="userBadge"></span>
-    <span class="rank-badge" id="rankBadge"></span>
-    <span id="adminBtns" style="display:none;gap:8px;align-items:center;">
-      <button class="hd-btn amber" id="adminModeBtn" onclick="toggleAdminMode()">⚙ 管理モード</button>
-      <button class="hd-btn green" onclick="openUserModal()">👥 ユーザー管理</button>
-      <button class="hd-btn amber" onclick="openRequestModal()" style="position:relative;">
-        📝 ユーザー申請
-        <span id="reqBadge" style="display:none;position:absolute;top:-6px;right:-6px;background:#c0392b;color:#fff;font-size:11px;font-weight:800;border-radius:10px;padding:2px 6px;min-width:18px;text-align:center;"></span>
-      </button>
-    </span>
-    <button class="hd-btn gray" onclick="doLogout()">ログアウト</button>
-  </div>
-</header>
+!-- クリア確認モーダル --
+div class=modal-bg id=clearModal
+  div class=modal
+    h3&#9888; オールクリアの確認h3
+    p style=font-size14px;color#555;line-height1.7;margin-bottom8px;入力中の全データを消去して新規作成状態に戻します。brこの操作は元に戻せません。よろしいですか？p
+    div class=modal-actions
+      button class=m-cancel onclick=closeModal('clearModal')キャンセルbutton
+      button class=m-ok style=background#E24B4A; onclick=execAllClear()クリアするbutton
+    div
+  div
+div
 
-<div class="hero">
-  <div class="hero-inner">
-    <div class="hero-title"><span>Business Portal</span>業務ポータル</div>
-    <div class="hero-desc">社内業務システムへのアクセスはこちらから。使用するシステムを選択してください。</div>
-  </div>
-</div>
+!-- 印刷モーダル --
+div class=modal-bg id=printModal
+  div class=modal style=width560px;
+    h3🖨️ 印刷設定（出力項目の選択）h3
+    div style=background#f8f8f6;border1px solid #e0e0db;border-radius8px;padding10px 14px;margin-bottom16px;displayflex;align-itemscenter;gap8px;flex-wrapwrap;
+      span style=font-size11px;font-weight700;color#888;white-spacenowrap;よく使う組み合わせ：span
+      button class=btn style=font-size12px;padding5px 12px; onclick=setPrintPreset(['ref-a','main-a'])🟠 自社用 (Aのみ)button
+      button class=btn style=font-size12px;padding5px 12px; onclick=setPrintPreset(['ref-b','main-b'])🔵 客先用 (Bのみ)button
+      button class=btn style=font-size12px;padding5px 12px; onclick=setPrintPreset(['ref-a','ref-b','main-a','main-b'])📋 全て (A+B)button
+    div
+    div style=displaygrid;grid-template-columns1fr 1fr;gap10px;margin-bottom16px;
+      label class=print-opt id=opt-ref-a style=cursorpointer;
+        input type=checkbox id=chk-ref-a value=ref-a onchange=updatePrintPreview() style=width18px;height18px;accent-color#378ADD;cursorpointer;flex-shrink0;margin-top2px;
+        div
+          div style=font-size13px;font-weight700;color#222;margin-bottom4px;displayflex;align-itemscenter;gap5px;
+            span style=font-size10px;padding2px 6px;border-radius4px;font-weight700;background#FEF3C7;color#854F0B;border1px solid #EF9F27;参考見積span
+            span style=font-size10px;padding2px 6px;border-radius4px;font-weight700;background#fff1f0;color#c0392b;border1px solid #f5c6cb;A金額span
+          div
+          div style=font-size11px;color#777;line-height1.4;自社用の原価確認用。参考見積のA単価・A金額を出力します。div
+        div
+      label
+      label class=print-opt id=opt-ref-b style=cursorpointer;
+        input type=checkbox id=chk-ref-b value=ref-b onchange=updatePrintPreview() style=width18px;height18px;accent-color#378ADD;cursorpointer;flex-shrink0;margin-top2px;
+        div
+          div style=font-size13px;font-weight700;color#222;margin-bottom4px;displayflex;align-itemscenter;gap5px;
+            span style=font-size10px;padding2px 6px;border-radius4px;font-weight700;background#FEF3C7;color#854F0B;border1px solid #EF9F27;参考見積span
+            span style=font-size10px;padding2px 6px;border-radius4px;font-weight700;background#e8f3fc;color#185FA5;border1px solid #b5d4f4;B金額span
+          div
+          div style=font-size11px;color#777;line-height1.4;客先提出用。参考見積のB単価・B金額を出力します。div
+        div
+      label
+      label class=print-opt id=opt-main-a style=cursorpointer;
+        input type=checkbox id=chk-main-a value=main-a onchange=updatePrintPreview() style=width18px;height18px;accent-color#378ADD;cursorpointer;flex-shrink0;margin-top2px;
+        div
+          div style=font-size13px;font-weight700;color#222;margin-bottom4px;displayflex;align-itemscenter;gap5px;
+            span style=font-size10px;padding2px 6px;border-radius4px;font-weight700;background#D1FAE5;color#065F46;border1px solid #10B981;本見積span
+            span style=font-size10px;padding2px 6px;border-radius4px;font-weight700;background#fff1f0;color#c0392b;border1px solid #f5c6cb;A金額span
+          div
+          div style=font-size11px;color#777;line-height1.4;自社用の原価確認用。本見積のA単価・A金額を出力します。div
+        div
+      label
+      label class=print-opt id=opt-main-b style=cursorpointer;
+        input type=checkbox id=chk-main-b value=main-b onchange=updatePrintPreview() style=width18px;height18px;accent-color#378ADD;cursorpointer;flex-shrink0;margin-top2px;
+        div
+          div style=font-size13px;font-weight700;color#222;margin-bottom4px;displayflex;align-itemscenter;gap5px;
+            span style=font-size10px;padding2px 6px;border-radius4px;font-weight700;background#D1FAE5;color#065F46;border1px solid #10B981;本見積span
+            span style=font-size10px;padding2px 6px;border-radius4px;font-weight700;background#e8f3fc;color#185FA5;border1px solid #b5d4f4;B金額span
+          div
+          div style=font-size11px;color#777;line-height1.4;客先提出用。本見積のB単価・B金額を出力します。div
+        div
+      label
+    div
+    !-- 用紙の向き --
+    div style=background#f8f8f6;border1px solid #e0e0db;border-radius8px;padding10px 14px;margin-bottom16px;displayflex;align-itemscenter;gap12px;flex-wrapwrap;
+      span style=font-size11px;font-weight700;color#888;white-spacenowrap;用紙の向き：span
+      label style=displayflex;align-itemscenter;gap5px;font-size13px;cursorpointer;
+        input type=radio name=printOrientation value=auto checked style=accent-color#378ADD; 自動（列数で判断）
+      label
+      label style=displayflex;align-itemscenter;gap5px;font-size13px;cursorpointer;
+        input type=radio name=printOrientation value=portrait style=accent-color#378ADD; 縦（A4）
+      label
+      label style=displayflex;align-itemscenter;gap5px;font-size13px;cursorpointer;
+        input type=radio name=printOrientation value=landscape style=accent-color#378ADD; 横（A4）
+      label
+    div
 
-<main class="main">
-  <div class="admin-mode-bar" id="adminModeBar">
-    <span>⚙ 管理モード：お知らせ・システムの追加・編集・削除ができます</span>
-    <button class="hd-btn" style="background:#888;" onclick="toggleAdminMode()">✕ 終了</button>
-  </div>
+    !-- レイアウトプレビュー --
+    div style=border1px solid #ddd;border-radius8px;padding12px 14px;margin-bottom16px;background#fafafa;
+      
+      div style=font-size11px;font-weight700;color#888;margin-bottom8px;印刷レイアウトプレビューdiv
+      div id=printPreviewLayout style=displayflex;gap6px;min-height48px;align-itemsstretch;
+        div style=flex1;text-aligncenter;color#bbb;font-size12px;padding12px;align-selfcenter;項目を選択してくださいdiv
+      div
+      div id=printPreviewError style=color#c0392b;font-size12px;margin-top6px;displaynone;text-aligncenter;※ 少なくとも1つ選択してくださいdiv
+    div
+    div class=modal-actions
+      button class=m-cancel onclick=closePrintModal()キャンセルbutton
+      button class=m-ok blue id=printModalOkBtn onclick=execPrint() disabled印刷プレビューを開くbutton
+    div
+  div
+div
 
-  <div class="section-label">
-    <div class="section-label-left">お知らせ <div class="section-line"></div></div>
-    <button class="admin-add-btn" onclick="openNoticeModal(null)">＋ 追加</button>
-  </div>
-  <div id="noticeDisplay" style="margin-bottom:28px;"></div>
+!-- テンプレート保存 --
+div class=modal-bg id=templateSaveModal
+  div class=modal
+    h3&#128196; テンプレートとして保存h3
+    div class=modal-fieldlabelテンプレート名 labelinput type=text id=tpl_name placeholder=例 伐採・集積工事div
+    div class=modal-field
+      label保存内容label
+      select id=tpl_saveType style=background#f8f8f8;border1px solid #ddd;border-radius6px;padding7px 10px;font-size13px;color#222;width100%;
+        option value=nameUnit摘要・単位のみ（数量・単価は保存しない）option
+        option value=all明細すべて（数量・単価も含む）option
+        option value=full基本情報＋明細すべてoption
+      select
+    div
+    div class=modal-fieldlabelメモ（任意）labeltextarea id=tpl_note rows=2 placeholder=このテンプレートの説明textareadiv
+    div class=modal-actions
+      button class=m-cancel onclick=closeModal('templateSaveModal')キャンセルbutton
+      button class=m-ok green onclick=execSaveTemplate()保存するbutton
+    div
+  div
+div
 
-  <div class="section-label">
-    <div class="section-label-left">社内システム一覧 <div class="section-line"></div></div>
-    <button class="admin-add-btn" onclick="openCardEditModal(null)">＋ 追加</button>
-  </div>
-  <div class="list-container" id="listGrid"></div>
-</main>
+!-- テンプレート管理 --
+div class=modal-bg id=templateManageModal
+  div class=modal list-modal
+    h3&#128196; テンプレート管理h3
+    div class=sub保存したテンプレートの一覧です。クリックして読み込めます。div
+    div id=tplManageListdiv style=text-aligncenter;padding20px;color#aaa;font-size13px;読み込み中...divdiv
+    div class=modal-actionsbutton class=m-cancel onclick=closeModal('templateManageModal')閉じるbuttondiv
+  div
+div
 
-<!-- システム追加・編集モーダル -->
-<div class="modal-bg" id="cardEditModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h2 id="cardEditTitle">＋ システムを追加</h2>
-      <button class="modal-close" onclick="closeModal('cardEditModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-row">
-        <div class="form-field"><label>アイコン</label><input type="text" id="ce_icon" placeholder="📋" maxlength="2" style="font-size:20px;text-align:center;"></div>
-        <div class="form-field"><label>アイコン色</label>
-          <select id="ce_color">
-            <option value="green">緑</option><option value="blue">青</option>
-            <option value="amber">オレンジ</option><option value="gray">グレー</option>
-            <option value="red">赤</option><option value="purple">紫</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-field"><label>タイトル *</label><input type="text" id="ce_title" placeholder="システム名"></div>
-      <div class="form-field"><label>URL</label><input type="text" id="ce_url" placeholder="https://..."></div>
-      <div class="form-field"><label>説明</label><textarea id="ce_desc" rows="2" placeholder="システムの説明"></textarea></div>
-      <div class="form-field">
-        <label style="display:flex;align-items:center;justify-content:space-between;">
-          <span>アクセス権限（このカードを表示する条件）</span>
-          <span style="font-size:11px;color:#185FA5;cursor:pointer;font-weight:600;" onclick="openPermissionModal()">権限を管理</span>
-        </label>
-        <div id="ce_access_list" style="display:flex;flex-direction:column;gap:6px;margin-top:4px;border:1px solid var(--gray-border);border-radius:8px;padding:10px;"></div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal('cardEditModal')">キャンセル</button>
-      <button class="btn btn-green" onclick="saveCard()">保存</button>
-    </div>
-  </div>
-</div>
+!-- リスト編集 --
+div class=modal-bg id=listModal
+  div class=modal list-modal
+    h3 id=listModalTitleリストを編集h3
+    div class=sub id=listModalSub入力候補を追加・並び替え・削除できます。div
+    div class=list-item-header id=listModalHeader style=displaynone;
+      span class=li-h-name摘要spanspan class=li-h-unit単位spanspan class=li-h-actspan
+    div
+    div class=list-items id=listItemsdiv
+    div class=list-add-row-ext id=listAddRowExt
+      input type=text class=list-add-input id=listAddInput placeholder=新しい摘要... onkeydown=if(event.key==='Enter')addListItem()
+      input type=text class=li-add-unit id=listAddUnit placeholder=単位
+      button class=list-add-btn onclick=addListItem()＋ 追加button
+    div
+    div class=list-add-row id=listAddRowSimple style=displaynone;
+      input type=text class=list-add-input id=listAddInputSimple placeholder=新しい項目を追加... onkeydown=if(event.key==='Enter')addListItemSimple()
+      button class=list-add-btn onclick=addListItemSimple()＋ 追加button
+    div
+    div class=modal-actions
+      button class=m-cancel onclick=closeModal('listModal')キャンセルbutton
+      button class=m-ok green onclick=saveList()保存して閉じるbutton
+    div
+  div
+div
 
-<!-- アクセス権限管理モーダル -->
-<div class="modal-bg" id="permissionModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>🔑 アクセス権限の管理</h2>
-      <button class="modal-close" onclick="closeModal('permissionModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <p style="font-size:12px;color:var(--text-sub);margin-bottom:14px;">カードに割り当てる権限をあらかじめ登録します。登録した権限は、カード編集とユーザー管理の両方で選べるようになります。</p>
-      <div id="permissionListWrap" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
-      <div style="display:flex;gap:8px;padding-top:14px;border-top:1px solid var(--gray-border);">
-        <input type="text" id="perm_key" placeholder="権限名（例: safety）" style="flex:1;">
-        <input type="text" id="perm_label" placeholder="表示名（例: 安全書類システム）" style="flex:1;">
-        <button class="btn btn-green" onclick="addPermission()" style="white-space:nowrap;">＋ 追加</button>
-      </div>
-    </div>
-    <div class="modal-footer"><button class="btn" onclick="closeModal('permissionModal')">閉じる</button></div>
-  </div>
-</div>
+!-- メールリスト --
+div class=modal-bg id=emailListModal
+  div class=modal list-modal
+    h3📧 通知先メールアドレス管理h3
+    div class=sub通知先を追加・削除できます。div
+    div class=list-items id=emailListItemsdiv
+    div class=list-add-row
+      input type=email class=list-add-input id=emailAddInput placeholder=example@gmail.com onkeydown=if(event.key==='Enter')addEmailItem()
+      button class=list-add-btn onclick=addEmailItem()＋ 追加button
+    div
+    div class=modal-actions
+      button class=m-cancel onclick=closeModal('emailListModal')キャンセルbutton
+      button class=m-ok green onclick=saveEmailList()保存して閉じるbutton
+    div
+  div
+div
 
-<!-- お知らせ追加・編集モーダル -->
-<div class="modal-bg" id="noticeModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h2 id="noticeModalTitle">＋ お知らせを追加</h2>
-      <button class="modal-close" onclick="closeModal('noticeModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-row">
-        <div class="form-field"><label>アイコン</label><input type="text" id="nm_icon" placeholder="📌" maxlength="2" style="font-size:20px;text-align:center;"></div>
-        <div class="form-field"><label>文字の色</label>
-          <select id="nm_color">
-            <option value="default">黒（標準）</option><option value="red">赤</option>
-            <option value="blue">青</option><option value="green">緑</option><option value="amber">オレンジ</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-field"><label>文字の大きさ</label>
-          <select id="nm_size">
-            <option value="xs">極小</option><option value="sm">小</option>
-            <option value="md" selected>標準</option><option value="lg">大</option><option value="xl">特大</option>
-          </select>
-        </div>
-        <div class="form-field"><label>URLリンク（任意）</label><input type="text" id="nm_url" placeholder="https://..."></div>
-      </div>
-      <div class="form-field"><label>お知らせ内容 *</label><textarea id="nm_text" rows="4" placeholder="お知らせ内容を入力してください"></textarea></div>
-    </div>
-    <div class="modal-footer between">
-      <button class="btn btn-red" id="noticeDeleteBtn" style="display:none;" onclick="deleteNoticeFromModal()">削除</button>
-      <div style="display:flex;gap:8px;">
-        <button class="btn" onclick="closeModal('noticeModal')">キャンセル</button>
-        <button class="btn btn-green" onclick="saveNotice()">保存</button>
-      </div>
-    </div>
-  </div>
-</div>
+!-- 重機追加モーダル --
+div class=modal-bg id=kikiAddModal
+  div class=modal kiki-add-modal
+    h3👷 稼働記録を追加h3
+    div class=modal-field
+      labelモードを選択label
+      div class=mode-radio-group
+        label class=mode-radio-opt selected id=modeOptKiki
+          input type=radio name=kikiMode value=kiki checked onchange=onKikiModeChange(this)
+          span class=mode-radio-opt-label🚗 重機ごとspan
+        label
+        label class=mode-radio-opt id=modeOptZenbu
+          input type=radio name=kikiMode value=zenbu onchange=onKikiModeChange(this)
+          span class=mode-radio-opt-label🏗 現場全体span
+        label
+      div
+    div
+    div class=modal-field id=kikiTargetField
+      label重機を選択label
+      select id=kikiTargetSelect style=border1px solid #ddd;border-radius6px;padding8px 10px;font-size13px;color#222;background#fff;width100%;select
+    div
+    div class=modal-field
+      label人数 × 日数label
+      div style=displayflex;align-itemscenter;gap8px;
+        input type=number id=kikiMansuu min=1 value=1 placeholder=人数 style=flex1;border1px solid #ddd;border-radius6px;padding8px 10px;font-size14px;text-alignright; oninput=calcKikiPreview()
+        span style=color#888;font-size13px;人span
+        span style=color#888;×span
+        input type=number id=kikiNissuu min=1 value=1 placeholder=日数 style=flex1;border1px solid #ddd;border-radius6px;padding8px 10px;font-size14px;text-alignright; oninput=calcKikiPreview()
+        span style=color#888;font-size13px;日span
+      div
+    div
+    div class=modal-field id=kikiZenbuAmtField style=displaynone;
+      label単価（円日・人）label
+      input type=number id=kikiZenbuAmt min=0 value= placeholder=0 style=border1px solid #ddd;border-radius6px;padding8px 10px;font-size14px;text-alignright;width100%; oninput=calcKikiPreview()
+    div
+    div class=kiki-calc-preview id=kikiCalcPreview— 人工　／　金額 —div
+    div class=modal-actions
+      button class=m-cancel onclick=closeModal('kikiAddModal')キャンセルbutton
+      button class=m-ok green onclick=addKikiRecord()追加button
+    div
+  div
+div
 
-<!-- ユーザー管理モーダル -->
-<div class="modal-bg" id="userModal">
-  <div class="modal modal-lg">
-    <div class="modal-header">
-      <h2>👥 ユーザー管理</h2>
-      <button class="modal-close" onclick="closeModal('userModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <button class="btn btn-green" onclick="openAddUserModal()" style="margin-bottom:16px;">＋ 新しいユーザーを追加</button>
-      <div id="userTableWrap"><div class="empty-msg">読み込み中...</div></div>
-    </div>
-    <div class="modal-footer"><button class="btn" onclick="closeModal('userModal')">閉じる</button></div>
-  </div>
-</div>
+!-- 重機料金表編集 --
+div class=modal-bg id=kikiModal
+  div class=modal list-modal
+    h3&#128663; 使用重機 料金表を編集h3
+    div class=sub重機の名称と日額料金を登録します。&#128274; でロックすると編集不可になります。div
+    div class=list-items id=kikiItemsdiv
+    div class=list-add-row
+      input type=text class=list-add-input id=kikiAddName placeholder=重機名（例 バックホウ0.45）
+      input type=number class=list-add-price id=kikiAddPrice placeholder=日額（円）
+      button class=list-add-btn onclick=addKikiItem()＋ 追加button
+    div
+    div class=modal-actions
+      button class=m-cancel onclick=closeModal('kikiModal')キャンセルbutton
+      button class=m-ok green onclick=saveKikiList()保存して閉じるbutton
+    div
+  div
+div
 
-<!-- 新規ユーザー追加モーダル -->
-<div class="modal-bg" id="addUserModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>＋ 新しいユーザーを追加</h2>
-      <button class="modal-close" onclick="closeModal('addUserModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-field"><label>メールアドレス</label><input type="email" id="newEmail" placeholder="example@gmail.com"></div>
-      <div class="form-field"><label>名前</label><input type="text" id="newName" placeholder="山田 太郎"></div>
-      <div class="form-field"><label>ランク</label>
-        <select id="newRank">
-          <option value="user">一般</option><option value="manager">中間</option><option value="admin">管理者</option>
-        </select>
-      </div>
-      <div class="form-field">
-        <label>アクセス権限</label>
-        <div id="newAccessList" style="display:flex;flex-direction:column;gap:8px;margin-top:4px;"></div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal('addUserModal')">キャンセル</button>
-      <button class="btn btn-green" onclick="addUser()">追加する</button>
-    </div>
-  </div>
-</div>
+!-- 法定福利費計算 --
+div class=modal-bg id=horitsuModal
+  div class=modal horitsu-modal
+    h3&#9878; 法定福利費 計算 span class=rate-badge令和8年度spanh3
+    div class=horitsu-tabs
+      button class=horitsu-tab active onclick=switchHoritsuTab('standard',this)標準計算（保険料率）button
+      button class=horitsu-tab onclick=switchHoritsuTab('formula',this)自由計算式button
+    div
+    div class=horitsu-panel active id=horitsuPanelStandard
+      div class=horitsu-input-group
+        label労務費総額（円）label
+        input type=number id=horitsuRomuhi placeholder=例 500000 oninput=calcHoritsuStandard()
+      div
+      div class=horitsu-rates-box
+        div class=box-title保険料率（%）— 事業主負担分　※令和8年度（変更可）div
+        div class=horitsu-rate-rowlabel雇用保険（建設の事業）span class=rate-badgeR8 1.05%spanlabelinput type=number id=rate_koyo value=1.05 step=0.01 oninput=calcHoritsuStandard()div
+        div class=horitsu-rate-rowlabel健康保険（山口県 協会けんぽ）span class=rate-badgeR8 5.075%spanlabelinput type=number id=rate_kenko value=5.075 step=0.001 oninput=calcHoritsuStandard()div
+        div class=horitsu-rate-rowlabel介護保険（事業主負担×加入率52.9%）span class=rate-badgeR8 0.428%spanlabelinput type=number id=rate_kaigo value=0.428 step=0.001 oninput=calcHoritsuStandard()div
+        div class=horitsu-rate-rowlabel厚生年金保険（子ども・子育て拠出金含む）labelinput type=number id=rate_kousei value=9.15 step=0.01 oninput=calcHoritsuStandard()div
+        div class=horitsu-rate-rowlabel子ども・子育て支援金 span class=rate-badgeR8.4新設spanlabelinput type=number id=rate_shien value=0.115 step=0.001 oninput=calcHoritsuStandard()div
+      div
+      div class=horitsu-result-box
+        span class=result-label法定福利費 合計span
+        span class=result-amt id=horitsuStdResult¥0span
+      div
+      div class=horitsu-breakdown id=horitsuBreakdowndiv
+      div style=margin-top10px;background#f8f8f6;border1px solid #e0e0db;border-radius6px;padding9px 12px;font-size11px;color#888;line-height1.8;
+        strong令和8年度 主な保険料率（事業主負担分）strongbr
+        雇用保険（建設） 10.51000 ／ 健康保険（山口） 10.15%×12=5.075%br
+        介護保険 1.62%×12×52.9%≈0.428% ／ 厚生年金 18.30%×12=9.15%br
+        子育て支援金 0.23%×12=0.115%（R8.4月〜）
+      div
+    div
+    div class=horitsu-panel id=horitsuPanelFormula
+      div class=horitsu-formula
+        label計算式を入力（四則演算 + -   と括弧が使えます）label
+        input type=text id=horitsuFormula placeholder=例 500000  0.1594 oninput=previewHoritsu()
+        div class=horitsu-preview計算結果 span id=horitsuResult—spandiv
+        div class=horitsu-error id=horitsuErrordiv
+      div
+      p style=font-size12px;color#888;例（R8年度 合計率 約15.818%） code500000  0.15818codep
+    div
+    div class=modal-actions
+      button class=m-cancel onclick=closeModal('horitsuModal')キャンセルbutton
+      button class=m-ok amber onclick=applyHoritsu()適用button
+    div
+  div
+div
 
-<!-- アクセス権限編集モーダル -->
-<div class="modal-bg" id="editAccessModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>🔑 アクセス権限を編集</h2>
-      <button class="modal-close" onclick="closeModal('editAccessModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-field">
-        <label id="editAccessLabel" style="font-weight:700;font-size:14px;color:#1a1a18;"></label>
-      </div>
-      <div id="editAccessList" style="display:flex;flex-direction:column;gap:8px;margin-top:8px;"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal('editAccessModal')">キャンセル</button>
-      <button class="btn btn-green" onclick="saveEditAccess()">保存</button>
-    </div>
-  </div>
-</div>
+!-- 見積番号発行 --
+div class=modal-bg id=abbrModal
+  div class=modal
+    h3🔢 見積番号を発行h3
+    div class=modal-field
+      label顧客略称（英数字・ハイフン・アンダーバー、最大10文字）label
+      input type=text id=abbrInput placeholder=例 YMT maxlength=10 style=text-transformuppercase;font-size16px;font-weight700;letter-spacing.1em; oninput=this.value=this.value.toUpperCase().replace([^A-Z0-9-_]g,'');previewEstimateNo()
+      small未入力の場合は「---」が使われますsmall
+      div class=abbr-error id=abbrErrordiv
+    div
+    div class=modal-field
+      labelプレビュー（連番はサーバーで確定）label
+      div class=no-preview-box id=noPreview—div
+    div
+    div class=modal-actions
+      button class=m-cancel onclick=closeModal('abbrModal')キャンセルbutton
+      button class=m-ok green id=abbrConfirmBtn onclick=execGenerateNo()この番号で確定button
+    div
+  div
+div
 
-<!-- ユーザー登録申請モーダル -->
-<div class="modal-bg" id="requestModal">
-  <div class="modal modal-lg">
-    <div class="modal-header">
-      <h2>📝 ユーザー登録申請</h2>
-      <button class="modal-close" onclick="closeModal('requestModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div style="background:#f8f8f6;border-radius:10px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-        <label style="font-size:13px;font-weight:600;color:#555;">通知先メールアドレス</label>
-        <input type="email" id="notifyEmailInput" placeholder="example@gmail.com" style="flex:1;min-width:200px;border:1px solid #ddd;border-radius:7px;padding:7px 10px;font-size:13px;">
-        <button class="btn btn-green" style="padding:7px 14px;" onclick="saveNotifyEmail()">保存</button>
-      </div>
-      <div id="requestTableWrap"><div class="empty-msg">読み込み中...</div></div>
-    </div>
-    <div class="modal-footer"><button class="btn" onclick="closeModal('requestModal')">閉じる</button></div>
-  </div>
-</div>
+!-- メインコンテンツ --
+div class=container
+  div class=tpl-bar
+    span class=tpl-bar-labelテンプレートspan
+    div class=tpl-chips id=tplChipsspan style=font-size12px;color#aaa;読み込み中...spandiv
+    button class=tpl-manage-btn onclick=openTemplateManageModal()管理 ▾button
+  div
 
-<!-- 承認時の権限選択モーダル -->
-<div class="modal-bg" id="approveModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>✅ 申請を承認</h2>
-      <button class="modal-close" onclick="closeModal('approveModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-field">
-        <label id="approveTargetLabel" style="font-weight:700;font-size:14px;color:#1a1a18;"></label>
-      </div>
-      <div class="form-field">
-        <label>ランク</label>
-        <select id="approveRank">
-          <option value="user">一般</option>
-          <option value="manager">中間</option>
-          <option value="admin">管理者</option>
-          <option value="viewer">閲覧専用</option>
-        </select>
-      </div>
-      <div class="form-field">
-        <label>アクセス権限</label>
-        <div id="approveAccessList" style="display:flex;flex-direction:column;gap:8px;margin-top:4px;"></div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal('approveModal')">キャンセル</button>
-      <button class="btn btn-green" onclick="confirmApprove()">この内容で承認する</button>
-    </div>
-  </div>
-</div>
+  div class=loaded-banner id=loadedBanner
+    span id=loadedMsgspan
+    button onclick=confirmAllClear()&#10006; 新規作成に戻すbutton
+  div
 
-<div id="toast" class="toast"></div>
-<footer class="footer">&copy; 山陽チップ工業株式会社 — 社内業務ポータル</footer>
+  div class=status-bar id=statusBar style=displaynone;
+    span class=status-bar-label id=statusBarLabel🟡 参考見積（未確定）span
+    span style=flex1;font-size12px;color#888; id=statusBarDesc本見積を作成後、「確定済みに変更」してくださいspan
+    button class=status-toggle-btn to-confirmed id=statusToggleBtn onclick=toggleEstimateStatus()✅ 確定済みに変更button
+  div
 
-</div>
-<!-- /appBody -->
+  !-- 基本情報 --
+  div class=section
+    div class=section-title基本情報div
+    div class=grid-2
+      div class=field
+        label見積番号label
+        div class=no-gen-wrap
+          input type=text id=estimateNo placeholder=🔢 右のボタンで発行 readonly
+          button type=button class=btn btn-green onclick=openAbbrModal() style=padding8px 13px;font-size12px;white-spacenowrap;flex-shrink0;🔢 番号生成button
+        div
+      div
+      div class=fieldlabel作成日labelinput type=date id=estimateDatediv
+      div class=field
+        label顧客略称 span style=font-size10px;color#999;margin-left4px;（英数字3〜10文字。番号生成に使用）spanlabel
+        div class=abbr-wrap
+          input type=text id=clientAbbr placeholder=YMT maxlength=10 oninput=this.value=this.value.toUpperCase().replace([^A-Z0-9-_]g,'') style=text-transformuppercase;
+          button type=button class=btn onclick=autoSuggestAbbr() style=font-size12px;padding7px 12px;white-spacenowrap;flex-shrink0;✨ 自動生成button
+        div
+      div
+      div class=field style=grid-columnspan 2label工事名labelinput type=text id=projectName placeholder=工事名を入力div
+      div class=fieldlabel工事場所labelinput type=text id=projectLocation placeholder=工事場所を入力div
+      div class=fieldlabel支払条件labelinput type=text id=paymentTerms value=月々出来高　月末締翌月末現金div
+      div class=field style=grid-columnspan 2
+        label摘要 button type=button onclick=openListModal('ac_summary_list') style=font-size11px;color#378ADD;padding2px 8px;border1px solid #b5d4f4;border-radius4px;background#f0f8ff;cursorpointer;margin-left8px;&#9998; リストを編集buttonlabel
+        div id=summaryAcWrapdiv
+      div
+    div
+  div
 
-<script>
-// ============================================================
-//  CONFIG
-// ============================================================
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzNavmjkCgjqqKRoam-xFtyNb0o31TGcVP_zN93Ge4hoVw8xKYbjXpapGGkBYFNFAak/exec';
-const GOOGLE_CLIENT_ID = '701718869898-mqj947fmfu2ej0lkgfhkfb9fnssrh6gb.apps.googleusercontent.com';
+  !-- お客様情報 --
+  div class=section
+    div class=section-titleお客様情報div
+    div class=grid-2
+      div class=fieldlabel会社名（宛先）labelinput type=text id=clientName placeholder=株式会社〇〇 oninput=onClientNameInput()div
+      div class=fieldlabel担当者名labelinput type=text id=clientContact placeholder=山田　太郎 様div
+      div class=fieldlabel住所labelinput type=text id=clientAddress placeholder=〒000-0000　〇〇市〇〇町…div
+      div class=fieldlabel見積り有効期限labelinput type=text id=validUntil placeholder=例 令和○年○月末div
+    div
+  div
 
-var CURRENT_USER = null;
-var _lastIdToken = null;
+  !-- 使用重機・稼働記録 --
+  div class=kiki-section
+    div class=kiki-header
+      span class=kiki-header-title🚗 使用重機・稼働記録span
+      div style=displayflex;gap8px;align-itemscenter;flex-wrapwrap;
+        button class=btn-sm onclick=openKikiAddModal()👷 追加button
+        button class=btn-sm style=background#888; onclick=openKikiModal()✎ 料金表を編集button
+      div
+    div
+    div class=kiki-table-wrap
+      table class=kiki-tbl id=kikiRecordTable
+        thead
+          tr
+            thモードthth対象th
+            th style=text-alignright人数th
+            th style=text-alignright日数th
+            th style=text-alignright合計人工th
+            th style=text-alignright金額th
+            thth
+          tr
+        thead
+        tbody id=kikiRecordBody
+          trtd colspan=7 class=kiki-empty「👷 追加」ボタンから登録してくださいtdtr
+        tbody
+      table
+    div
+    div class=kiki-tbl-foot
+      span class=foot-label合計人工span
+      span class=foot-val id=kikiTotalMandays0人工span
+      span class=foot-label style=margin-left16px;合計金額span
+      span class=foot-val id=kikiTotal¥0span
+    div
+  div
 
-// ============================================================
-//  GAS通信（重機日報と同じ XMLHttpRequest 方式。CORS/リダイレクト問題を回避）
-// ============================================================
-function postToGas(payload, timeoutMs){
-  return new Promise((resolve, reject)=>{
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', GAS_URL, true);
-    if(timeoutMs) xhr.timeout = timeoutMs;
-    xhr.onload = function(){
-      if(xhr.status >= 200 && xhr.status < 300){
-        try{ resolve(JSON.parse(xhr.responseText)); }
-        catch(e){ reject(new Error('レスポンスの解析に失敗しました')); }
-      }else{
-        reject(new Error('サーバーエラー (status: '+xhr.status+')'));
-      }
-    };
-    xhr.onerror = function(){ reject(new Error('通信に失敗しました')); };
-    xhr.ontimeout = function(){ reject(new Error('タイムアウトしました')); };
-    xhr.send(JSON.stringify(payload));
-  });
-}
+  !-- 2カラム見積 --
+  div class=estimate-cols
+    !-- 参考見積 --
+    div class=estimate-col ref
+      div class=col-header
+        span class=col-label ref&#9632; 参考見積span
+      div
+      div style=height45px;div
+      div class=items-wrap
+        table class=items id=refTable
+          colgroup
+            col class=col-dragcol class=col-nocol class=col-viscol class=col-name
+            col class=col-qtycol class=col-unitcol class=col-pricecol class=col-amtcol class=col-del
+          colgroup
+          thead
+            tr
+              th rowspan=2thth rowspan=2#thth rowspan=2表示th
+              th摘要 button type=button onclick=openListModal(LS_NAME_LIST) class=th-btn&#9998;buttonth
+              th数量thth単位th
+              thA単価thth style=color#854F0BA金額th
+              th rowspan=2th
+            tr
+            tr
+              th colspan=3 style=border-left1px solid #ddd;備考 button type=button onclick=openListModal(LS_NOTE_LIST) class=th-btn&#9998;buttonth
+              th style=color#185FA5B単価thth style=color#185FA5B金額th
+            tr
+          thead
+        table
+      div
+      button class=add-row-btn onclick=addRow('ref')＋ 行を追加button
+      button class=add-row-btn onclick=addHoritsuRow('ref') style=border-color#EF9F27;color#854F0B;margin-top4px;⚖ 法定福利行を追加button
+      button class=add-disc-btn onclick=addDiscountRow('ref')％ 値引き行を追加button
+      div class=col-summary
+        table
+          trtd class=lbl colspan=2 style=font-weight700;color#854F0B;padding-bottom2px;A金額（自社用）tdtr
+          trtd class=lbl小計tdtd id=refSubtotal¥0tdtr
+          tr id=refDiscRow style=displaynonetd class=disc-lbl値引合計tdtd class=disc-val id=refDiscTotal-¥0tdtr
+          trtd class=lbl消費税（10%）tdtd id=refTax¥0tdtr
+          tr class=totaltdA合計tdtd id=refTotal2¥0tdtr
+          trtd colspan=2 style=padding6px 0 2px;border-top1px solid #ddd;tdtr
+          trtd class=lbl colspan=2 style=font-weight700;color#185FA5;padding-bottom2px;B金額（客先用）tdtr
+          trtd class=lbl style=color#185FA5小計tdtd id=refBSubtotal¥0tdtr
+          tr id=refBDiscRow style=displaynonetd class=disc-lbl値引合計tdtd class=disc-val id=refBDiscTotal-¥0tdtr
+          trtd class=lbl style=color#185FA5消費税（10%）tdtd id=refBTax¥0tdtr
+          tr class=totaltd style=color#185FA5B合計tdtd id=refBTotal2 style=color#185FA5¥0tdtr
+        table
+      div
+    div
 
-function getDeviceToken(){ return localStorage.getItem('portalDeviceToken') || ''; }
-function setDeviceToken(t){ localStorage.setItem('portalDeviceToken', t); }
-function clearDeviceToken(){ localStorage.removeItem('portalDeviceToken'); }
+    !-- 本見積 --
+    div class=estimate-col main
+      div class=col-header
+        span class=col-label main&#9632; 本見積span
+      div
+      div class=sync-bar
+        input type=checkbox id=syncFromRef onchange=onSyncFromRefChange() style=accent-color#1D9E75;
+        label for=syncFromRef style=color#0F6E56;摘要・数量・単位・備考を参考見積から反映するlabel
+        span class=sync-hint（チェックで取り込み・行数も自動調整）span
+      div
+      div class=items-wrap
+        table class=items id=mainTable
+          colgroup
+            col class=col-dragcol class=col-nocol class=col-viscol class=col-name
+            col class=col-qtycol class=col-unitcol class=col-pricecol class=col-amtcol class=col-del
+          colgroup
+          thead
+            tr
+              th rowspan=2thth rowspan=2#thth rowspan=2表示th
+              th摘要 button type=button onclick=openListModal(LS_NAME_LIST) class=th-btn&#9998;buttonth
+              th数量thth単位th
+              thA単価thth style=color#0F6E56A金額th
+              th rowspan=2th
+            tr
+            tr
+              th colspan=3 style=border-left1px solid #ddd;備考 button type=button onclick=openListModal(LS_NOTE_LIST) class=th-btn&#9998;buttonth
+              th style=color#185FA5B単価thth style=color#185FA5B金額th
+            tr
+          thead
+        table
+      div
+      button class=add-row-btn onclick=addRow('main')＋ 行を追加button
+      button class=add-row-btn onclick=addHoritsuRow('main') style=border-color#EF9F27;color#854F0B;margin-top4px;⚖ 法定福利行を追加button
+      button class=add-disc-btn onclick=addDiscountRow('main')％ 値引き行を追加button
+      div class=col-summary
+        table
+          trtd class=lbl colspan=2 style=font-weight700;color#0F6E56;padding-bottom2px;A金額（自社用）tdtr
+          trtd class=lbl小計tdtd id=mainSubtotal¥0tdtr
+          tr id=mainDiscRow style=displaynonetd class=disc-lbl値引合計tdtd class=disc-val id=mainDiscTotal-¥0tdtr
+          trtd class=lbl消費税（10%）tdtd id=mainTax¥0tdtr
+          tr class=totaltdA合計tdtd id=mainTotal2¥0tdtr
+          trtd colspan=2 style=padding6px 0 2px;border-top1px solid #ddd;tdtr
+          trtd class=lbl colspan=2 style=font-weight700;color#185FA5;padding-bottom2px;B金額（客先用）tdtr
+          trtd class=lbl style=color#185FA5小計tdtd id=mainBSubtotal¥0tdtr
+          tr id=mainBDiscRow style=displaynonetd class=disc-lbl値引合計tdtd class=disc-val id=mainBDiscTotal-¥0tdtr
+          trtd class=lbl style=color#185FA5消費税（10%）tdtd id=mainBTax¥0tdtr
+          tr class=totaltd style=color#185FA5B合計tdtd id=mainBTotal2 style=color#185FA5¥0tdtr
+        table
+      div
+    div
+  div
 
-async function portalApi(action, params){
-  const payload = Object.assign({action:action, deviceToken:getDeviceToken()}, params||{});
-  const data = await postToGas(payload);
-  if(data && (data.status==='error') && /認証|ログイン/.test(data.message||'')){
-    clearDeviceToken();
-    showLoginView('セッションの有効期限が切れました。再度ログインしてください。');
-  }
-  return data;
-}
+  div class=action-bar
+    button class=btn btn-blue onclick=openPrintModal()&#128438; 印刷プレビューbutton
+    button class=btn onclick=exportXlsx() style=border-color#1D7A45;color#1D7A45;&#128202; Excel出力button
+    button class=btn onclick=openTemplateSaveModal() style=border-color#EF9F27;color#854F0B;&#128196; テンプレートとして保存button
+    button class=btn btn-green id=driveBtn onclick=confirmSave()&#128190; Google Driveへ保存button
+  div
+div
 
-// ============================================================
-//  認証：Google Sign-In
-// ============================================================
-function initGoogleSignIn(){
-  if(window.google && google.accounts && google.accounts.id){
-    google.accounts.id.initialize({client_id: GOOGLE_CLIENT_ID, callback: onGoogleSignIn});
-    google.accounts.id.renderButton(document.getElementById('g_id_signin_container'), {theme:'filled_blue', size:'large', text:'signin_with', locale:'ja'});
-  }else{
-    setTimeout(initGoogleSignIn, 200);
-  }
-}
+div id=toast class=toastdiv
 
-async function onGoogleSignIn(response){
-  _lastIdToken = response.credential;
-  try{
-    const data = await postToGas({action:'portalAuth', idToken:response.credential});
-    if(data.ok){
-      setDeviceToken(data.deviceToken);
-      CURRENT_USER = {email:data.email, name:data.name, rank:data.rank, access:data.access};
-      showApp();
-    }else if(data.needsRequest){
-      document.getElementById('reqEmail').value = data.email;
-      showRequestCard();
-    }else{
-      showAuthError(data.message || 'ログインに失敗しました');
-    }
-  }catch(e){
-    showAuthError('通信エラー: ' + e.message);
-  }
-}
+script
+ ============================================================
+  定数・状態変数
+ ============================================================
+const GAS_URL='httpsscript.google.commacrossAKfycbyCko53kzXg1MWp2fGA9diCheQsLKrU5vFf0FwJh9cnG7O1GjibB8Ym5bHkPzVQfhHRexec';
+const LS_NAME_LIST='ac_name_list', LS_NOTE_LIST='ac_note_list', LS_SUMMARY_LIST='ac_summary_list';
+const LS_KIKI_LIST='kiki_list', LS_EMAIL_LIST='notify_email_list';
 
-function showAuthError(msg){
-  const el = document.getElementById('authError');
-  el.textContent = msg;
-  el.style.display = 'block';
-}
-
-function showLoginView(msg){
-  clearDeviceToken();
-  document.getElementById('appBody').style.display = 'none';
-  document.getElementById('authOverlay').style.display = 'flex';
-  document.getElementById('authLoginView').style.display = 'block';
-  document.getElementById('requestCard').classList.remove('show');
-  if(msg) showAuthError(msg);
-}
-
-function showRequestCard(){
-  document.getElementById('authLoginView').style.display = 'none';
-  document.getElementById('requestCard').classList.add('show');
-}
-function hideRequestCard(){
-  document.getElementById('requestCard').classList.remove('show');
-  document.getElementById('authLoginView').style.display = 'block';
-}
-
-async function submitRequest(){
-  const name = document.getElementById('reqName').value.trim();
-  if(!name){ showToast('お名前を入力してください', 'error'); return; }
-  if(!_lastIdToken){ showToast('もう一度Googleログインからやり直してください', 'error'); hideRequestCard(); return; }
-  showToast('送信中...', 'info');
-  try{
-    const data = await postToGas({action:'portalSubmitRequest', idToken:_lastIdToken, name:name});
-    if(data.ok){
-      showToast(data.message || '申請を送信しました', 'success');
-      hideRequestCard();
-    }else{
-      showToast(data.message || '申請に失敗しました', 'error');
-    }
-  }catch(e){
-    showToast('通信エラー: ' + e.message, 'error');
-  }
-}
-
-function doLogout(){
-  clearDeviceToken();
-  location.reload();
-}
-
-// ============================================================
-//  起動時：deviceTokenがあれば自動ログイン、なければログイン画面
-// ============================================================
-async function initApp(){
-  initGoogleSignIn();
-  const token = getDeviceToken();
-  if(!token){
-    return; // ログイン画面のまま
-  }
-  try{
-    const data = await portalApi('portalGetHomeData', {});
-    if(data.ok){
-      CURRENT_USER = data.user;
-      allCards = data.cards || [];
-      NOTICES_DATA = data.notices || [];
-      ALL_PERMISSIONS = data.permissions || [];
-      showApp(true);
-    }else{
-      showLoginView(data.message || 'セッションが無効です。再度ログインしてください。');
-    }
-  }catch(e){
-    showLoginView('通信エラー: ' + e.message);
-  }
-}
-
-function showApp(alreadyLoaded){
-  document.getElementById('authOverlay').style.display = 'none';
-  document.getElementById('appBody').style.display = 'block';
-  document.getElementById('userBadge').textContent = CURRENT_USER.name || CURRENT_USER.email;
-  const rb = document.getElementById('rankBadge');
-  rb.textContent = CURRENT_USER.rank==='admin' ? '管理者' : CURRENT_USER.rank==='manager' ? '中間' : '一般';
-  rb.className = 'rank-badge ' + (CURRENT_USER.rank==='admin' || CURRENT_USER.rank==='manager' ? CURRENT_USER.rank : 'user');
-  if(CURRENT_USER.rank==='admin' || CURRENT_USER.rank==='manager'){
-    document.getElementById('adminBtns').style.display = 'flex';
-    refreshRequestBadge();
-  }
-  if(alreadyLoaded){
-    renderList();
-    renderNotices();
-  }else{
-    renderList();
-    loadAndRenderCards();
-    loadAndRenderNotices();
-  }
-}
-
-// ============================================================
-//  固定システム
-// ============================================================
-var FIXED_SYSTEMS = [
-  {
-    id: 'estimate', fixed: true,
-    title: '見積書作成システム',
-    desc:  '参考見積・本見積の作成、Google Driveへの保存、過去データの検索・読み込みができます。',
-    icon: '📋', color: 'green',
-    access: 'estimate',
-    url: GAS_URL + '?page=estimate',
-    newTab: false
-  },
-  {
-    id: 'docs', fixed: true,
-    title: '書類管理',
-    desc:  '各種書類の保管・検索システムです。',
-    icon: '📁', color: 'gray',
-    access: 'portal',
-    url: 'https://drive.google.com/drive/folders/117cD3bOP9WbHgjfKmbLLMbZyr7ykd1Rn?usp=sharing',
-    newTab: true
-  },
+const DEFAULT_NAMES=['伐採','集積','積込','運搬工（伐採木）','運搬工（根株）','破砕処理（伐採木）','重機運搬','法定福利','諸経費','仮設工','土工','コンクリート打設','型枠工','鉄筋工','防水工','塗装工'];
+const DEFAULT_NOTES=['予定数量','実費精算','消費税別途','数量確認中','設計変更対応'];
+const DEFAULT_SUMMARIES=['伐採・集積・運搬工事','造成工事','解体工事','外構工事','補修工事'];
+const DEFAULT_KIKI=[
+  {name'バックホウ 0.45㎥',price45000,lockedfalse},
+  {name'バックホウ 0.25㎥',price38000,lockedfalse},
+  {name'クローラークレーン',price80000,lockedfalse},
+  {name'ダンプ 4t',price22000,lockedfalse},
+  {name'ダンプ 10t',price30000,lockedfalse},
+  {name'チッパー',price35000,lockedfalse},
+];
+const DEFAULT_ROWS=[
+  {name'伐採工',qty'',unit'㎡',price'',bPrice'',disc'',note'',visibletrue,type'normal',directAmt''},
+  {name'集積工',qty'',unit'㎡',price'',bPrice'',disc'',note'',visibletrue,type'normal',directAmt''},
+  {name'積込工',qty'',unit'㎡',price'',bPrice'',disc'',note'',visibletrue,type'normal',directAmt''},
+  {name'運搬工（伐採木）',qty'',unit'㎥',price'',bPrice'',disc'',note'',visibletrue,type'normal',directAmt''},
+  {name'運搬工（根株）',qty'',unit'㎥',price'',bPrice'',disc'',note'',visibletrue,type'normal',directAmt''},
+  {name'破砕処理工（伐採木）',qty'',unit'㎥',price'',bPrice'',disc'',note'',visibletrue,type'normal',directAmt''},
+  {name'破砕処理工（根株）',qty'',unit'㎥',price'',bPrice'',disc'',note'',visibletrue,type'normal',directAmt''},
+  {name'重機回送',qty'',unit'回',price'',bPrice'',disc'',note'',visibletrue,type'normal',directAmt''},
+  {name'法定福利費',qty'',unit'式',price'',bPrice'',disc'',note'',visibletrue,type'horitsu',directAmt'',bDirectAmt''},
+  {name'諸経費',qty'',unit'式',price'',bPrice'',disc'',note'',visibletrue,type'normal',directAmt''},
 ];
 
-var isAdminMode = false;
-var editingCardId = null;
-var editingNoticeId = null;
-var allCards = [];
-var NOTICES_DATA = [];
-var ALL_PERMISSIONS = [];
+var refRows=DEFAULT_ROWS.map(r=({...r}));
+var mainRows=DEFAULT_ROWS.map(r=({...r}));
+var kikiRecords=[];
+var cachedRecords=[], dragSrc=null;
+var editingListKey='', editingListItems=[], editingKikiItems=[], editingEmailItems=[];
+var horitsuTargetType='ref', horitsuTargetIdx=0, horitsuCurrentTab='standard', horitsuUseB=false;
+var _currentStatus='draft', _currentEstimateNo='', _searchStatusFilter='';
+var _listDragSrc=null, allTemplates=[];
+var _userRank='user';
+var _listCache={};
 
-document.addEventListener('DOMContentLoaded', initApp);
+ ============================================================
+  ユーティリティ
+ ============================================================
+function fmt(n){return Number(n).toLocaleString('ja-JP');}
+function esc(s){return(s'').replace(&g,'&amp;').replace(g,'&lt;').replace(g,'&quot;');}
+function getRows(t){return t==='ref'refRowsmainRows;}
+function hasGasRuntime(){return typeof google!=='undefined'&&google.script&&google.script.run;}
+function goPortal(){window.open(GAS_URL.split('')[0],'_top');}
 
-// ============================================================
-//  アクセス権限マスタ
-// ============================================================
-function openPermissionModal(){
-  document.getElementById('permissionModal').classList.add('open');
-  loadPermissions();
+ ============================================================
+  ローカルストレージ + サーバーリスト管理
+ ============================================================
+function loadList(key,def){
+  if(_listCache[key])return _listCache[key];
+  try{var v=localStorage.getItem(key);if(v){var p=JSON.parse(v);_listCache[key]=p;return p;}}catch(e){}
+  return def.map(function(item){return typeof item==='object'Object.assign({},item)item;});
+}
+function saveListLS(key,arr){
+  _listCache[key]=arr;
+  try{localStorage.setItem(key,JSON.stringify(arr));}catch(e){}
+  if(!hasGasRuntime())return;
+  google.script.run.withSuccessHandler(function(){}).withFailureHandler(function(){showToast('リスト保存に失敗しました','error');}).saveListFromClient(key,arr);
+}
+function restoreListsFromServer(){
+  if(!hasGasRuntime())return;
+  google.script.run
+    .withSuccessHandler(function(j){
+      var data=(j&&j.data){};
+      ['ac_name_list','ac_note_list','ac_summary_list','kiki_list','notify_email_list'].forEach(function(k){
+        if(data[k]&&Array.isArray(data[k])&&data[k].length0){
+          _listCache[k]=data[k];
+          try{localStorage.setItem(k,JSON.stringify(data[k]));}catch(e){}
+        }
+      });
+       ★修正1 renderKikiGrid→renderKikiRecordTable に統一
+      renderKikiRecordTable();
+      renderNotifyEmailSelect();
+    })
+    .withFailureHandler(function(){showToast('データ読み込みに失敗。ローカルデータで表示中','info');})
+    .getAllListsForClient();
 }
 
-async function loadPermissions(){
-  document.getElementById('permissionListWrap').innerHTML = '<div class="empty-msg">読み込み中...</div>';
-  try{
-    const data = await portalApi('portalGetPermissions', {});
-    ALL_PERMISSIONS = data.data || [];
-    renderPermissionList();
-  }catch(e){
-    showToast('取得失敗: ' + e.message, 'error');
+ ============================================================
+  権限・ロールUI
+ ============================================================
+function initRoleUI(){
+  if(!hasGasRuntime())return;
+  google.script.run
+    .withSuccessHandler(function(user){
+      _userRank=user.rank'user';
+      applyRoleUI(_userRank);
+    })
+    .withFailureHandler(function(){})
+    .checkAccess();
+}
+function applyRoleUI(rank){
+  if(rank==='viewer'){
+    var el=document.getElementById('driveBtn');
+    if(el){el.disabled=true;el.title='閲覧専用アカウントは保存できません';}
+    showToast('閲覧専用モードで表示しています','info');
   }
-}
-
-function renderPermissionList(){
-  const w = document.getElementById('permissionListWrap');
-  if(!ALL_PERMISSIONS.length){
-    w.innerHTML = '<div class="empty-msg">権限がありません</div>';
-    return;
-  }
-  w.innerHTML = ALL_PERMISSIONS.map(function(p){
-    const delBtn = p.builtin
-      ? '<span style="font-size:11px;color:var(--text-sub);">初期権限</span>'
-      : '<span style="cursor:pointer;color:#c0392b;" onclick="deletePermission(\'' + esc(p.key) + '\')"><i style="font-style:normal;">✕</i></span>';
-    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--gray-bg);border-radius:8px;">' +
-      '<div><span style="font-size:13px;font-weight:700;">' + esc(p.key) + '</span>' +
-      '<span style="font-size:12px;color:var(--text-sub);margin-left:8px;">' + esc(p.label) + '</span></div>' +
-      delBtn +
-    '</div>';
-  }).join('');
-}
-
-async function addPermission(){
-  const key = document.getElementById('perm_key').value.trim();
-  const label = document.getElementById('perm_label').value.trim();
-  if(!key || !label){ showToast('権限名と表示名の両方を入力してください', 'error'); return; }
-  showToast('追加中...', 'info');
-  try{
-    await portalApi('portalAddPermission', {key:key, label:label});
-    showToast('権限を追加しました', 'success');
-    document.getElementById('perm_key').value = '';
-    document.getElementById('perm_label').value = '';
-    loadPermissions();
-  }catch(e){
-    showToast('エラー: ' + e.message, 'error');
-  }
-}
-
-async function deletePermission(key){
-  if(!confirm(key + ' を削除しますか？この権限を使っているカードやユーザーからは表示条件が外れます。')) return;
-  showToast('削除中...', 'info');
-  try{
-    await portalApi('portalDeletePermission', {key:key});
-    showToast('削除しました', 'success');
-    loadPermissions();
-  }catch(e){
-    showToast('エラー: ' + e.message, 'error');
-  }
-}
-
-// ============================================================
-//  カード — サーバーから取得して描画
-// ============================================================
-async function loadAndRenderCards(){
-  const grid = document.getElementById('listGrid');
-  const loadingEl = document.createElement('div');
-  loadingEl.className = 'list-loading';
-  loadingEl.id = 'cardLoadingIndicator';
-  loadingEl.innerHTML = '<div class="spinner"></div>カスタムシステムを読み込み中...';
-  grid.appendChild(loadingEl);
-
-  try{
-    const data = await portalApi('portalGetHomeData', {});
-    const el = document.getElementById('cardLoadingIndicator');
-    if(el) el.remove();
-    if(data.ok){
-      allCards = data.cards || [];
-      ALL_PERMISSIONS = data.permissions || [];
-      renderList();
+  if(rank==='user'){
+    var confirmedOpt=document.querySelector('.save-mode-opt input[value=confirmed]');
+    if(confirmedOpt){
+      var optEl=confirmedOpt.closest('.save-mode-opt');
+      if(optEl)optEl.style.display='none';
+      var draftOpt=document.querySelector('.save-mode-opt input[value=draft]');
+      if(draftOpt){draftOpt.checked=true;draftOpt.dispatchEvent(new Event('change'));}
     }
-  }catch(e){
-    const el = document.getElementById('cardLoadingIndicator');
-    if(el) el.remove();
-    showToast('カードの読み込みに失敗しました: ' + e.message, 'error');
+    var toggleBtn=document.getElementById('statusToggleBtn');
+    if(toggleBtn)toggleBtn.style.display='none';
   }
 }
 
-// ============================================================
-//  システム一覧描画
-// ============================================================
-function renderList(){
-  const container = document.getElementById('listGrid');
-  container.innerHTML = '';
-
-  const myAccess = (CURRENT_USER.access || '').split(',').map(function(a){return a.trim();}).filter(Boolean);
-  const isAdmin = CURRENT_USER.rank === 'admin';
-  const allSystems = FIXED_SYSTEMS.concat(
-    allCards.filter(function(c){ return c.title; })
-  );
-
-  allSystems.forEach(function(sys){
-    const required  = (sys.access || '').split(',').map(function(a){return a.trim();}).filter(Boolean);
-    const canAccess = isAdmin || required.length === 0 || required.some(function(r){ return myAccess.indexOf(r) !== -1; });
-    const isLink    = canAccess && !sys.coming && sys.url;
-
-    const el = document.createElement(isLink ? 'a' : 'div');
-    el.className = 'list-item' + (!canAccess && !sys.coming ? ' locked' : '');
-    if(isLink){
-      el.href   = sys.url;
-      el.target = (sys.newTab || !sys.fixed) ? '_blank' : '_self';
-    }
-
-    const lockBadge   = (!canAccess && !sys.coming) ? '<span class="badge-sm badge-locked">🔒 権限なし</span>' : '';
-    const comingBadge = sys.coming ? '<span class="badge-sm badge-coming">準備中</span>' : '';
-
-    let editBtns = '';
-    if(!sys.fixed){
-      editBtns =
-        '<div class="list-edit-btns">' +
-          '<button class="list-edit-btn edit" ' +
-            'onclick="event.preventDefault();event.stopPropagation();openCardEditModal(\'' + esc(sys.id) + '\')">' +
-            '編集</button>' +
-          '<button class="list-edit-btn del" ' +
-            'onclick="event.preventDefault();event.stopPropagation();deleteCard(\'' + esc(sys.id) + '\')">' +
-            '削除</button>' +
-        '</div>';
-    }
-
-    el.innerHTML =
-      '<div class="list-item-left">' +
-        '<div class="list-icon ' + (sys.color || 'green') + '">' + (sys.icon || '📄') + '</div>' +
-        '<div class="list-text">' +
-          '<div class="list-title">' + esc(sys.title) + ' ' + lockBadge + comingBadge + '</div>' +
-          '<div class="list-desc">'  + esc(sys.desc  || '') + '</div>' +
-        '</div>' +
-      '</div>' +
-      '<div class="list-right">' +
-        editBtns +
-        (isLink ? '<div class="list-arrow">›</div>' : '') +
-      '</div>';
-
-    container.appendChild(el);
-  });
-
-  if(isAdminMode) document.querySelector('.main').classList.add('admin-mode');
-}
-
-// ============================================================
-//  管理モード切替
-// ============================================================
-function toggleAdminMode(){
-  isAdminMode = !isAdminMode;
-  const bar  = document.getElementById('adminModeBar');
-  const btn  = document.getElementById('adminModeBtn');
-  const main = document.querySelector('.main');
-  if(isAdminMode){
-    bar.classList.add('show');
-    main.classList.add('admin-mode');
-    btn.textContent = '✕ 管理モード終了';
-    btn.style.background = '#888';
+ ============================================================
+  ステータスバー
+ ============================================================
+function updateStatusBar(status){
+  _currentStatus=status;
+  var bar=document.getElementById('statusBar'),label=document.getElementById('statusBarLabel'),
+      desc=document.getElementById('statusBarDesc'),btn=document.getElementById('statusToggleBtn');
+  if(!_currentEstimateNo){bar.style.display='none';return;}
+  bar.style.display='flex';
+  if(status==='draft'){
+    bar.className='status-bar';label.textContent='🟡 参考見積（未確定）';
+    desc.textContent='本見積を作成後、「確定済みに変更」してください';
+    btn.textContent='✅ 確定済みに変更';btn.className='status-toggle-btn to-confirmed';
   }else{
-    bar.classList.remove('show');
-    main.classList.remove('admin-mode');
-    btn.textContent = '⚙ 管理モード';
-    btn.style.background = 'var(--amber)';
+    bar.className='status-bar confirmed';label.textContent='🟢 本見積（確定済）';
+    desc.textContent='確定済みの見積書です';
+    btn.textContent='🔄 未確定に戻す';btn.className='status-toggle-btn to-draft';
   }
 }
-
-// ============================================================
-//  カード CRUD
-// ============================================================
-function renderCeAccessCheckboxes(selected){
-  const wrap = document.getElementById('ce_access_list');
-  const selectedList = (selected||'').split(',').map(function(a){return a.trim();}).filter(Boolean);
-  if(!ALL_PERMISSIONS.length){
-    wrap.innerHTML = '<div style="font-size:12px;color:var(--text-sub);">権限が登録されていません</div>';
-    return;
-  }
-  wrap.innerHTML = ALL_PERMISSIONS.map(function(p){
-    const checked = selectedList.indexOf(p.key) !== -1 ? 'checked' : '';
-    return '<label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">' +
-      '<input type="checkbox" class="ce-access-cb" value="' + esc(p.key) + '" ' + checked + ' style="width:16px;height:16px;">' +
-      esc(p.key) + ' - ' + esc(p.label) +
-    '</label>';
-  }).join('');
+function toggleEstimateStatus(){
+  if(!_currentEstimateNo){showToast('見積書を読み込んでから操作してください','error');return;}
+  var newStatus=_currentStatus==='draft''confirmed''draft';
+  if(!hasGasRuntime()){showToast('GAS環境外では変更できません','info');return;}
+  showToast('ステータスを更新中...','info');
+  google.script.run
+    .withSuccessHandler(function(){updateStatusBar(newStatus);showToast(newStatus==='confirmed''確定済みに変更しました''未確定に戻しました','success');})
+    .withFailureHandler(function(e){showToast('更新失敗 '+e.message,'error');})
+    .updateEstimateStatusFromClient(_currentEstimateNo,newStatus);
+}
+function onSaveModeChange(radio){
+  document.querySelectorAll('.save-mode-opt').forEach(function(el){el.classList.remove('selected');});
+  radio.closest('.save-mode-opt').classList.add('selected');
+  document.getElementById('notifyBlock').style.display=radio.value==='draft''block''none';
+}
+function setStatusFilter(btn,status){
+  document.querySelectorAll('.s-status-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');_searchStatusFilter=status;
 }
 
-function openCardEditModal(id){
-  editingCardId = id;
-  document.getElementById('cardEditTitle').textContent = id ? '✎ システムを編集' : '＋ システムを追加';
-  document.getElementById('ce_icon').value  = '📄';
-  document.getElementById('ce_color').value = 'green';
-  document.getElementById('ce_title').value = '';
-  document.getElementById('ce_url').value   = '';
-  document.getElementById('ce_desc').value  = '';
-  let selectedAccess = '';
-  if(id){
-    const card = allCards.filter(function(c){ return c.id === id; })[0];
-    if(card){
-      document.getElementById('ce_icon').value  = card.icon  || '📄';
-      document.getElementById('ce_color').value = card.color || 'green';
-      document.getElementById('ce_title').value = card.title || '';
-      document.getElementById('ce_url').value   = card.url   || '';
-      document.getElementById('ce_desc').value  = card.desc  || '';
-      selectedAccess = card.access || '';
-    }
+ ============================================================
+  見積番号発行
+ ============================================================
+function todayStr(){var d=new Date(),y=d.getFullYear(),m=('0'+(d.getMonth()+1)).slice(-2),day=('0'+d.getDate()).slice(-2);return''+y+m+day;}
+function openAbbrModal(){
+  var abbr=(document.getElementById('clientAbbr'){}).value'';
+  document.getElementById('abbrInput').value=abbr;
+  document.getElementById('abbrError').style.display='none';
+  document.getElementById('abbrConfirmBtn').disabled=false;
+  document.getElementById('abbrConfirmBtn').textContent='この番号で確定';
+  previewEstimateNo();
+  document.getElementById('abbrModal').classList.add('open');
+  setTimeout(function(){document.getElementById('abbrInput').focus();},100);
+}
+function previewEstimateNo(){
+  var abbr=document.getElementById('abbrInput').value.trim()'---';
+  document.getElementById('noPreview').textContent=todayStr()+'-'+abbr+'-';
+}
+function execGenerateNo(){
+  var abbr=document.getElementById('abbrInput').value.trim();
+  var errEl=document.getElementById('abbrError');errEl.style.display='none';
+  if(abbr&&!^[A-Z0-9-_]{1,10}$.test(abbr)){errEl.textContent='英数字・ハイフン・アンダーバーのみ（最大10文字）';errEl.style.display='block';return;}
+  var btn=document.getElementById('abbrConfirmBtn');btn.disabled=true;btn.textContent='採番中...';
+  showToast('番号を発行しています...','info');
+  if(!hasGasRuntime()){
+    var seq=('00'+Math.floor(Math.random()99+1)).slice(-3),fallback=todayStr()+'-'+(abbr'---')+'-'+seq;
+    document.getElementById('estimateNo').value=fallback;
+    var af=document.getElementById('clientAbbr');if(af)af.value=abbr;
+    closeModal('abbrModal');btn.disabled=false;btn.textContent='この番号で確定';
+    showToast('オフライン採番 '+fallback,'info');return;
   }
-  renderCeAccessCheckboxes(selectedAccess);
-  document.getElementById('cardEditModal').classList.add('open');
+  google.script.run
+    .withSuccessHandler(function(result){
+      btn.disabled=false;btn.textContent='この番号で確定';
+      if(!result.ok){errEl.textContent='エラー '+result.message;errEl.style.display='block';showToast('採番失敗','error');return;}
+      document.getElementById('estimateNo').value=result.estimateNo;
+      var af=document.getElementById('clientAbbr');if(af)af.value=abbr;
+      closeModal('abbrModal');showToast('見積番号を発行しました '+result.estimateNo,'success');
+    })
+    .withFailureHandler(function(e){btn.disabled=false;btn.textContent='この番号で確定';errEl.textContent='サーバーエラー '+e.message;errEl.style.display='block';showToast('採番エラー','error');})
+    .generateEstimateNoFromClient(abbr);
+}
+function autoSuggestAbbr(){
+  var cn=document.getElementById('clientName').value.trim();
+  if(!cn){showToast('先に「会社名」を入力してください','info');return;}
+  if(!hasGasRuntime()){showToast('GAS環境外では自動生成できません','info');return;}
+  showToast('略称を生成中...','info');
+  google.script.run
+    .withSuccessHandler(function(result){if(result.ok&&result.abbr){document.getElementById('clientAbbr').value=result.abbr;showToast('略称候補 '+result.abbr,'success');}})
+    .withFailureHandler(function(e){showToast('自動生成失敗 '+e.message,'error');})
+    .suggestAbbrFromClient(cn);
+}
+function onClientNameInput(){
+  var af=document.getElementById('clientAbbr');
+  if(af&&!af.value.trim())af.placeholder='← ✨ 自動生成ボタンで入力';
 }
 
-async function saveCard(){
-  const title = document.getElementById('ce_title').value.trim();
-  if(!title){ showToast('タイトルは必須です', 'error'); return; }
-  const accessList = Array.from(document.querySelectorAll('.ce-access-cb:checked')).map(function(cb){return cb.value;});
-  const card = {
-    title: title,
-    icon:  document.getElementById('ce_icon').value  || '📄',
-    color: document.getElementById('ce_color').value || 'green',
-    desc:  document.getElementById('ce_desc').value.trim(),
-    url:   document.getElementById('ce_url').value.trim(),
-    access: accessList.join(','),
-  };
-  showToast('保存中...', 'info');
-  try{
-    const data = editingCardId
-      ? await portalApi('portalUpdateCard', {id:editingCardId, card:card})
-      : await portalApi('portalAddCard', {card:card});
-    showToast(editingCardId ? 'システムを更新しました' : 'システムを追加しました', 'success');
-    closeModal('cardEditModal');
-    loadAndRenderCards();
-  }catch(e){
-    showToast('エラー: ' + e.message, 'error');
-  }
-}
-
-async function deleteCard(id){
-  if(!confirm('このシステムを削除しますか？')) return;
-  showToast('削除中...', 'info');
-  try{
-    await portalApi('portalDeleteCard', {id:id});
-    showToast('削除しました', 'success');
-    loadAndRenderCards();
-  }catch(e){
-    showToast('エラー: ' + e.message, 'error');
-  }
-}
-
-// ============================================================
-//  お知らせ
-// ============================================================
-async function loadAndRenderNotices(){
-  document.getElementById('noticeDisplay').innerHTML =
-    '<div class="notice-loading"><div class="spinner"></div>読み込み中...</div>';
-  try{
-    const data = await portalApi('portalGetHomeData', {});
-    if(data.ok){
-      NOTICES_DATA = data.notices || [];
-      renderNotices();
-    }
-  }catch(e){
-    NOTICES_DATA = [];
-    renderNotices();
-    console.warn('お知らせ取得失敗:', e.message);
-  }
-}
-
-function renderNotices(){
-  const display = document.getElementById('noticeDisplay');
-  display.innerHTML = '';
-  if(!NOTICES_DATA.length){
-    display.innerHTML = '<div class="notice-empty">お知らせはありません</div>';
-    return;
-  }
-  NOTICES_DATA.forEach(function(n){
-    const colorMap = { default:'var(--text-main)', red:'#c0392b', blue:'#185FA5', green:'#1D9E75', amber:'#EF9F27' };
-    const sizeMap  = { xs:'11px', sm:'12px', md:'13px', lg:'15px', xl:'18px' };
-    const color = colorMap[n.color] || colorMap.default;
-    const size  = sizeMap[n.size]   || sizeMap.md;
-    let textHtml = esc(n.text).replace(/\n/g, '<br>');
-    if(n.url){
-      textHtml = '<a href="' + esc(n.url) + '" target="_blank" style="color:inherit;text-decoration:underline;">' +
-        textHtml + ' <span style="font-size:.8em;">🔗</span></a>';
-    }
-    const el = document.createElement('div');
-    el.className = 'notice-item';
-    el.innerHTML =
-      '<div class="notice-content">' +
-        '<span class="notice-icon">' + esc(n.icon || '📌') + '</span>' +
-        '<div class="notice-text" style="color:' + color + ';font-size:' + size + ';">' + textHtml + '</div>' +
-      '</div>' +
-      '<div class="notice-edit-btns">' +
-        '<button class="list-edit-btn edit" onclick="openNoticeModal(\'' + esc(n.id) + '\')">編集</button>' +
-        '<button class="list-edit-btn del"  onclick="deleteNotice(\'' + esc(n.id) + '\')">削除</button>' +
-      '</div>';
-    display.appendChild(el);
+ ============================================================
+  メール通知リスト
+ ============================================================
+function renderNotifyEmailSelect(){
+  var sel=document.getElementById('notifyEmail');
+  var items=loadList(LS_EMAIL_LIST,[]);
+  var current=sel.value;
+  sel.innerHTML='option value=— 送信しない —option';
+  items.forEach(function(email){
+    var opt=document.createElement('option');opt.value=email;opt.textContent=email;
+    if(email===current)opt.selected=true;
+    sel.appendChild(opt);
   });
 }
+function openEmailListModal(){
+  editingEmailItems=loadList(LS_EMAIL_LIST,[]).slice();
+  renderEmailListModal();
+  document.getElementById('emailListModal').classList.add('open');
+}
+function renderEmailListModal(){
+  var c=document.getElementById('emailListItems');c.innerHTML='';
+  editingEmailItems.forEach(function(email,i){
+    var row=document.createElement('div');row.className='list-item';
+    var inp=document.createElement('input');inp.type='email';inp.value=email;
+    inp.style.cssText='flex1;border1px solid #ddd;border-radius5px;padding6px 9px;font-size13px;color#222;';
+    inp.addEventListener('input',function(){editingEmailItems[i]=this.value;});
+    var del=document.createElement('button');del.className='list-item-del';del.innerHTML='&#10005;';
+    del.onclick=function(){editingEmailItems.splice(i,1);renderEmailListModal();};
+    row.appendChild(inp);row.appendChild(del);c.appendChild(row);
+  });
+}
+function addEmailItem(){
+  var v=document.getElementById('emailAddInput').value.trim();if(!v)return;
+  editingEmailItems.push(v);document.getElementById('emailAddInput').value='';
+  renderEmailListModal();document.getElementById('emailListItems').scrollTop=9999;
+}
+function saveEmailList(){
+  var toSave=editingEmailItems.filter(function(v){return v.trim()!=='';});
+  saveListLS(LS_EMAIL_LIST,toSave);closeModal('emailListModal');
+  renderNotifyEmailSelect();showToast('メールアドレスを保存しました','success');
+}
 
-function openNoticeModal(id){
-  editingNoticeId = id;
-  const delBtn = document.getElementById('noticeDeleteBtn');
-  if(id){
-    const n = NOTICES_DATA.filter(function(x){ return x.id === id; })[0];
-    if(n){
-      document.getElementById('nm_icon').value  = n.icon  || '📌';
-      document.getElementById('nm_color').value = n.color || 'default';
-      document.getElementById('nm_size').value  = n.size  || 'md';
-      document.getElementById('nm_url').value   = n.url   || '';
-      document.getElementById('nm_text').value  = n.text  || '';
-    }
-    document.getElementById('noticeModalTitle').textContent = '✎ お知らせを編集';
-    delBtn.style.display = 'inline-flex';
+ ============================================================
+  重機稼働記録
+ ============================================================
+function openKikiAddModal(){
+  var items=loadList(LS_KIKI_LIST,DEFAULT_KIKI);
+  var sel=document.getElementById('kikiTargetSelect');
+  sel.innerHTML=items.map(function(it){
+    return 'option value='+esc(it.name)+' data-price='+(it.price0)+''+esc(it.name)+'　¥'+fmt(it.price)+'日option';
+  }).join('');
+  document.querySelector('input[name=kikiMode][value=kiki]').checked=true;
+  document.getElementById('modeOptKiki').classList.add('selected');
+  document.getElementById('modeOptZenbu').classList.remove('selected');
+  document.getElementById('kikiTargetField').style.display='';
+  document.getElementById('kikiZenbuAmtField').style.display='none';
+  document.getElementById('kikiZenbuAmt').value='';
+  document.getElementById('kikiMansuu').value=1;
+  document.getElementById('kikiNissuu').value=1;
+  calcKikiPreview();
+  document.getElementById('kikiAddModal').classList.add('open');
+}
+function onKikiModeChange(radio){
+  document.querySelectorAll('.mode-radio-opt').forEach(function(el){el.classList.remove('selected');});
+  radio.closest('.mode-radio-opt').classList.add('selected');
+  document.getElementById('kikiTargetField').style.display=radio.value==='kiki''''none';
+  document.getElementById('kikiZenbuAmtField').style.display=radio.value==='zenbu''''none';
+  calcKikiPreview();
+}
+function calcKikiPreview(){
+  var mode=document.querySelector('input[name=kikiMode]checked').value;
+  var mansuu=parseInt(document.getElementById('kikiMansuu').value)0;
+  var nissuu=parseInt(document.getElementById('kikiNissuu').value)0;
+  var mandays=mansuunissuu, amt=0;
+  if(mode==='kiki'){
+    var sel=document.getElementById('kikiTargetSelect');
+    var opt=sel.options[sel.selectedIndex];
+    amt=(optparseInt(opt.dataset.price)00)mansuunissuu;
   }else{
-    document.getElementById('nm_icon').value  = '📌';
-    document.getElementById('nm_color').value = 'default';
-    document.getElementById('nm_size').value  = 'md';
-    document.getElementById('nm_url').value   = '';
-    document.getElementById('nm_text').value  = '';
-    document.getElementById('noticeModalTitle').textContent = '＋ お知らせを追加';
-    delBtn.style.display = 'none';
+    amt=(parseInt(document.getElementById('kikiZenbuAmt').value)0)mansuunissuu;
   }
-  document.getElementById('noticeModal').classList.add('open');
+  var prev=mandays+'人工';
+  if(amt0)prev+='　／　¥'+fmt(amt);
+  document.getElementById('kikiCalcPreview').textContent=prev;
 }
-
-async function saveNotice(){
-  const text = document.getElementById('nm_text').value.trim();
-  if(!text){ showToast('お知らせ内容を入力してください', 'error'); return; }
-  const notice = {
-    icon:  document.getElementById('nm_icon').value.trim()  || '📌',
-    color: document.getElementById('nm_color').value,
-    size:  document.getElementById('nm_size').value,
-    url:   document.getElementById('nm_url').value.trim(),
-    text:  text,
-  };
-  showToast('保存中...', 'info');
-  try{
-    if(editingNoticeId){ await portalApi('portalUpdateNotice', {id:editingNoticeId, notice:notice}); }
-    else { await portalApi('portalAddNotice', {notice:notice}); }
-    showToast(editingNoticeId ? 'お知らせを更新しました' : 'お知らせを追加しました', 'success');
-    closeModal('noticeModal');
-    loadAndRenderNotices();
-  }catch(e){
-    showToast('エラー: ' + e.message, 'error');
+function addKikiRecord(){
+  var mode=document.querySelector('input[name=kikiMode]checked').value;
+  var mansuu=parseInt(document.getElementById('kikiMansuu').value)0;
+  var nissuu=parseInt(document.getElementById('kikiNissuu').value)0;
+  if(!mansuu!nissuu){showToast('人数・日数を入力してください','error');return;}
+  var target='現場全体',price=0,amt=0;
+  if(mode==='kiki'){
+    var sel=document.getElementById('kikiTargetSelect');
+    var opt=sel.options[sel.selectedIndex];
+    if(!opt){showToast('重機を選択してください','error');return;}
+    target=opt.value;price=parseInt(opt.dataset.price)0;
+    amt=pricemansuunissuu;
+  }else{
+    amt=(parseInt(document.getElementById('kikiZenbuAmt').value)0)mansuunissuu;
   }
+  kikiRecords.push({modemode,targettarget,mansuumansuu,nissuunissuu,mandaysmansuunissuu,priceprice,amtamt});
+  closeModal('kikiAddModal');
+  renderKikiRecordTable();
+  showToast('稼働記録を追加しました','success');
 }
-
-async function deleteNotice(id){
-  if(!confirm('このお知らせを削除しますか？')) return;
-  showToast('削除中...', 'info');
-  try{
-    await portalApi('portalDeleteNotice', {id:id});
-    showToast('削除しました', 'success');
-    loadAndRenderNotices();
-  }catch(e){
-    showToast('エラー: ' + e.message, 'error');
-  }
+function delKikiRecord(idx){
+  kikiRecords.splice(idx,1);
+  renderKikiRecordTable();
 }
-
-function deleteNoticeFromModal(){
-  closeModal('noticeModal');
-  deleteNotice(editingNoticeId);
-}
-
-// ============================================================
-//  ユーザー管理
-// ============================================================
-function openUserModal(){
-  document.getElementById('userModal').classList.add('open');
-  loadUsers();
-}
-
-async function loadUsers(){
-  document.getElementById('userTableWrap').innerHTML = '<div class="empty-msg">読み込み中...</div>';
-  try{
-    const data = await portalApi('portalGetUsers', {});
-    renderUserTable(data.data);
-  }catch(e){
-    showToast('取得失敗: ' + e.message, 'error');
-  }
-}
-
-function renderUserTable(users){
-  const w = document.getElementById('userTableWrap');
-  if(!users || !users.length){
-    w.innerHTML = '<div class="empty-msg">ユーザーが登録されていません</div>';
+function renderKikiRecordTable(){
+  var tbody=document.getElementById('kikiRecordBody');
+  if(!kikiRecords.length){
+    tbody.innerHTML='trtd colspan=7 class=kiki-empty「👷 追加」ボタンから登録してくださいtdtr';
+    document.getElementById('kikiTotalMandays').textContent='0人工';
+    document.getElementById('kikiTotal').textContent='¥0';
     return;
   }
-  const rows = users.map(function(u, idx){
-    const accessList = (u.access||'').split(',').map(function(a){return a.trim();}).filter(Boolean);
-    const accessBadges = accessList.length
-      ? accessList.map(function(a){return '<span class="badge-sm" style="background:var(--green-light);color:var(--green-dark);margin-right:4px;">'+esc(a)+'</span>';}).join('')
-      : '<span style="font-size:11px;color:var(--text-sub);">なし</span>';
-    return '<tr>' +
-      '<td>' + esc(u.email) + '</td>' +
-      '<td>' + esc(u.name)  + '</td>' +
-      '<td><select class="rank-sel" onchange="changeRank(\'' + esc(u.email) + '\',this.value)">' +
-        '<option value="user"'   +(u.rank==='user'   ?' selected':'')+'>一般</option>' +
-        '<option value="manager"'+(u.rank==='manager'?' selected':'')+'>中間</option>' +
-        '<option value="admin"'  +(u.rank==='admin'  ?' selected':'')+'>管理者</option>' +
-        '<option value="viewer"' +(u.rank==='viewer' ?' selected':'')+'>閲覧専用</option>' +
-      '</select></td>' +
-      '<td>' + accessBadges + ' <span style="font-size:11px;color:#185FA5;cursor:pointer;font-weight:600;" onclick="openEditAccessModal(\''+esc(u.email)+'\',\''+esc(u.access||'')+'\')">編集</span></td>' +
-      '<td style="text-align:center;position:relative;">' +
-        '<span class="row-menu-btn" onclick="toggleRowMenu(event,' + idx + ')" style="cursor:pointer;font-size:18px;color:var(--text-sub);padding:4px 8px;">⋮</span>' +
-        '<div class="row-menu" id="rowMenu' + idx + '" style="display:none;position:absolute;right:0;top:100%;background:#fff;border:1px solid var(--gray-border);border-radius:8px;box-shadow:var(--shadow-md);z-index:50;min-width:160px;text-align:left;">' +
-          '<div style="padding:8px 12px;font-size:11px;color:var(--text-sub);border-bottom:1px solid var(--gray-border);">登録日: ' + esc(u.date) + '</div>' +
-          '<div style="padding:9px 12px;font-size:13px;color:#c0392b;cursor:pointer;" onclick="deleteUser(\'' + esc(u.email) + '\')">削除する</div>' +
-        '</div>' +
-      '</td>' +
-    '</tr>';
+  var totalMandays=0,totalAmt=0;
+  tbody.innerHTML=kikiRecords.map(function(r,i){
+    totalMandays+=r.mandays;totalAmt+=r.amt;
+    var badge=r.mode==='kiki''span class=mode-kiki重機span''span class=mode-zenbu全体span';
+    return 'tr'+
+      'td class=mode-badge'+badge+'td'+
+      'td'+esc(r.target)+'td'+
+      'td class=mans'+r.mansuu+'人td'+
+      'td class=mans'+r.nissuu+'日td'+
+      'td class=mans'+r.mandays+'人工td'+
+      'td class=amt'+(r.amt0'¥'+fmt(r.amt)'—')+'td'+
+      'tdbutton class=del-btn onclick=delKikiRecord('+i+')✕buttontd'+
+      'tr';
   }).join('');
-  w.innerHTML =
-    '<table class="user-table"><thead><tr>' +
-    '<th>メール</th><th>名前</th><th>ランク</th><th>アクセス</th><th></th>' +
-    '</tr></thead><tbody>' + rows + '</tbody></table>';
+  document.getElementById('kikiTotalMandays').textContent=totalMandays+'人工';
+  document.getElementById('kikiTotal').textContent='¥'+fmt(totalAmt);
 }
-
-function toggleRowMenu(evt, idx){
-  evt.stopPropagation();
-  document.querySelectorAll('.row-menu').forEach(function(m){
-    if(m.id !== 'rowMenu'+idx) m.style.display = 'none';
+function openKikiModal(){
+  editingKikiItems=JSON.parse(JSON.stringify(loadList(LS_KIKI_LIST,DEFAULT_KIKI)));
+  renderKikiModal();
+  document.getElementById('kikiModal').classList.add('open');
+}
+function renderKikiModal(){
+  var container=document.getElementById('kikiItems');container.innerHTML='';
+  editingKikiItems.forEach(function(item,i){
+    var row=document.createElement('div');row.className='list-item';
+    var nameInp=document.createElement('input');nameInp.type='text';nameInp.value=item.name;nameInp.disabled=item.locked;
+    nameInp.addEventListener('input',function(){editingKikiItems[i].name=this.value;});
+    var priceInp=document.createElement('input');priceInp.type='number';priceInp.value=item.price;priceInp.disabled=item.locked;
+    priceInp.addEventListener('input',function(){editingKikiItems[i].price=parseFloat(this.value)0;});
+    var lockBtn=document.createElement('button');lockBtn.className='list-item-lock'+(item.locked' locked''');
+    lockBtn.innerHTML=item.locked'&#128274;''&#128275;';lockBtn.title=item.locked'ロック解除''ロック';
+    lockBtn.onclick=function(){editingKikiItems[i].locked=!editingKikiItems[i].locked;renderKikiModal();};
+    var del=document.createElement('button');del.className='list-item-del';del.innerHTML='&#10005;';del.disabled=item.locked;
+    del.onclick=function(){if(!editingKikiItems[i].locked){editingKikiItems.splice(i,1);renderKikiModal();}};
+    row.appendChild(nameInp);row.appendChild(priceInp);row.appendChild(lockBtn);row.appendChild(del);
+    container.appendChild(row);
   });
-  const menu = document.getElementById('rowMenu'+idx);
-  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
 }
-document.addEventListener('click', function(){
-  document.querySelectorAll('.row-menu').forEach(function(m){ m.style.display = 'none'; });
-});
-
-function renderAccessCheckboxes(containerId, selected){
-  const wrap = document.getElementById(containerId);
-  const selectedList = (selected||'').split(',').map(function(a){return a.trim();}).filter(Boolean);
-  if(!ALL_PERMISSIONS.length){
-    wrap.innerHTML = '<div style="font-size:12px;color:var(--text-sub);">権限が登録されていません</div>';
-    return;
-  }
-  wrap.innerHTML = ALL_PERMISSIONS.map(function(p){
-    const checked = selectedList.indexOf(p.key) !== -1 ? 'checked' : '';
-    return '<label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">' +
-      '<input type="checkbox" class="' + containerId + '-cb" value="' + esc(p.key) + '" ' + checked + ' style="width:16px;height:16px;">' +
-      esc(p.key) + ' - ' + esc(p.label) +
-    '</label>';
-  }).join('');
+function addKikiItem(){
+  var name=document.getElementById('kikiAddName').value.trim(),price=parseFloat(document.getElementById('kikiAddPrice').value)0;
+  if(!name)return;
+  editingKikiItems.push({namename,priceprice,lockedfalse});
+  document.getElementById('kikiAddName').value='';document.getElementById('kikiAddPrice').value='';
+  renderKikiModal();
 }
+function saveKikiList(){saveListLS(LS_KIKI_LIST,editingKikiItems);closeModal('kikiModal');showToast('料金表を保存しました','success');}
 
-function openAddUserModal(){
-  document.getElementById('newEmail').value = '';
-  document.getElementById('newName').value = '';
-  document.getElementById('newRank').value = 'user';
-  renderAccessCheckboxes('newAccessList', '');
-  document.getElementById('addUserModal').classList.add('open');
+ ============================================================
+  法定福利費計算
+ ============================================================
+function switchHoritsuTab(tab,btn){
+  horitsuCurrentTab=tab;
+  document.querySelectorAll('.horitsu-tab').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.horitsu-panel').forEach(function(p){p.classList.remove('active');});
+  btn.classList.add('active');
+  document.getElementById('horitsuPanel'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');
 }
-
-async function addUser(){
-  const email  = document.getElementById('newEmail').value.trim();
-  const name   = document.getElementById('newName').value.trim();
-  const rank   = document.getElementById('newRank').value;
-  const accessList = Array.from(document.querySelectorAll('.newAccessList-cb:checked')).map(function(cb){return cb.value;});
-  if(!email){ showToast('メールアドレスを入力してください', 'error'); return; }
-  showToast('追加中...', 'info');
+function openHoritsuModal(type,idx,useB){
+  horitsuTargetType=type;horitsuTargetIdx=idx;horitsuUseB=!!useB;
+  var row=getRows(type)[idx];
+  if(row.horitsuRomuhi)document.getElementById('horitsuRomuhi').value=row.horitsuRomuhi;
+  if(row.horitsuFormula)document.getElementById('horitsuFormula').value=row.horitsuFormula;
+  document.getElementById('horitsuError').textContent='';
+  var currentAmt=useB(parseFloat(row.bDirectAmt)parseFloat(row.directAmt)0)(parseFloat(row.directAmt)0);
+  document.getElementById('horitsuResult').textContent=currentAmt'¥'+fmt(currentAmt)'—';
+  document.querySelector('#horitsuModal h3').innerHTML=
+    (useB'⚖ 法定福利費 計算 span style=color#185FA5;font-size13px;【B金額】span'
+          '⚖ 法定福利費 計算 span style=color#854F0B;font-size13px;【A金額】span')+
+    ' span class=rate-badge令和8年度span';
+  calcHoritsuStandard();
+  document.getElementById('horitsuModal').classList.add('open');
+}
+function calcHoritsuStandard(){
+  var romu=parseFloat(document.getElementById('horitsuRomuhi').value)0;
+  var rKoyo=(parseFloat(document.getElementById('rate_koyo').value)0)100;
+  var rKenko=(parseFloat(document.getElementById('rate_kenko').value)0)100;
+  var rKaigo=(parseFloat(document.getElementById('rate_kaigo').value)0)100;
+  var rKousei=(parseFloat(document.getElementById('rate_kousei').value)0)100;
+  var rShienEl=document.getElementById('rate_shien');
+  var rShien=rShienEl(parseFloat(rShienEl.value)0)1000;
+  var aKoyo=Math.round(romurKoyo),aKenko=Math.round(romurKenko),aKaigo=Math.round(romurKaigo),
+      aKousei=Math.round(romurKousei),aShien=Math.round(romurShien);
+  var total=aKoyo+aKenko+aKaigo+aKousei+aShien;
+  document.getElementById('horitsuStdResult').textContent=romu'¥'+fmt(total)'¥0';
+  document.getElementById('horitsuBreakdown').innerHTML=romu
+    '内訳 雇用 ¥'+fmt(aKoyo)+' ／ 健保 ¥'+fmt(aKenko)+
+    ' ／ 介護 ¥'+fmt(aKaigo)+' ／ 厚年 ¥'+fmt(aKousei)+
+    (aShien' ／ 子育支 ¥'+fmt(aShien)'')'';
+}
+function previewHoritsu(){
+  var expr=document.getElementById('horitsuFormula').value.trim();
+  var errEl=document.getElementById('horitsuError'),resEl=document.getElementById('horitsuResult');
+  if(!expr){resEl.textContent='—';errEl.textContent='';return;}
   try{
-    await portalApi('portalAddUser', {email:email, rank:rank, name:name, access:accessList.join(',')});
-    showToast('追加しました', 'success');
-    closeModal('addUserModal');
-    loadUsers();
-  }catch(e){
-    showToast('エラー: ' + e.message, 'error');
+    if(!^[ds+-.()]+$.test(expr))throw new Error('使用できない文字があります');
+    var val=Function('use strict; return ('+expr+')')();
+    if(isNaN(val)!isFinite(val))throw new Error('計算結果が無効です');
+    resEl.textContent='¥'+fmt(Math.round(val));errEl.textContent='';
+  }catch(e){resEl.textContent='—';errEl.textContent=e.message;}
+}
+function applyHoritsu(){
+  var rows=getRows(horitsuTargetType),row=rows[horitsuTargetIdx];
+  var amtKey=horitsuUseB'bDirectAmt''directAmt';
+  if(horitsuCurrentTab==='standard'){
+    var romu=parseFloat(document.getElementById('horitsuRomuhi').value)0;
+    if(!romu){closeModal('horitsuModal');return;}
+    var rKoyo=(parseFloat(document.getElementById('rate_koyo').value)0)100;
+    var rKenko=(parseFloat(document.getElementById('rate_kenko').value)0)100;
+    var rKaigo=(parseFloat(document.getElementById('rate_kaigo').value)0)100;
+    var rKousei=(parseFloat(document.getElementById('rate_kousei').value)0)100;
+    var rShienEl=document.getElementById('rate_shien');
+    var rShien=rShienEl(parseFloat(rShienEl.value)0)1000;
+    row[amtKey]=Math.round(romu(rKoyo+rKenko+rKaigo+rKousei+rShien));
+    row.horitsuRomuhi=romu;row.horitsuFormula='';
+  }else{
+    var expr=document.getElementById('horitsuFormula').value.trim();
+    var errEl=document.getElementById('horitsuError');
+    if(!expr){closeModal('horitsuModal');return;}
+    try{
+      if(!^[ds+-.()]+$.test(expr))throw new Error('使用できない文字があります');
+      var val=Function('use strict; return ('+expr+')')();
+      if(isNaN(val)!isFinite(val))throw new Error('計算結果が無効です');
+      row[amtKey]=Math.round(val);row.horitsuFormula=expr;row.horitsuRomuhi='';
+    }catch(e){errEl.textContent=e.message;return;}
   }
+  closeModal('horitsuModal');renderRows(horitsuTargetType);showToast('法定福利費を設定しました','success');
 }
 
-var _editAccessEmail = null;
-function openEditAccessModal(email, currentAccess){
-  _editAccessEmail = email;
-  document.getElementById('editAccessLabel').textContent = email;
-  renderAccessCheckboxes('editAccessList', currentAccess);
-  document.getElementById('editAccessModal').classList.add('open');
-}
+ ============================================================
+  オートコンプリート (AC)
+ ============================================================
+var activeAc=null;
+function closeAllAc(){document.querySelectorAll('.ac-list.show').forEach(function(el){el.classList.remove('show');});activeAc=null;}
 
-async function saveEditAccess(){
-  const accessList = Array.from(document.querySelectorAll('.editAccessList-cb:checked')).map(function(cb){return cb.value;});
-  showToast('更新中...', 'info');
-  try{
-    await portalApi('portalUpdateUserAccess', {email:_editAccessEmail, access:accessList.join(',')});
-    showToast('アクセス権限を更新しました', 'success');
-    closeModal('editAccessModal');
-    loadUsers();
-  }catch(e){
-    showToast('エラー: ' + e.message, 'error');
+function buildAcInput(id,value,placeholder,listKey,onSelectCb,onChangeCb){
+  var wrap=document.createElement('div');wrap.className='ac-wrap';
+  var input=document.createElement('input');input.type='text';input.value=value;input.placeholder=placeholder;if(id)input.id=id;
+  var list=document.createElement('div');list.className='ac-list';
+   ★修正5 リスト生成時に参照inputを保持（スクロール追従用）
+  list._linkedInput=input;
+  document.body.appendChild(list);
+
+  function positionList(){
+    var rect=input.getBoundingClientRect();
+    list.style.left=rect.left+'px';
+    list.style.top=(rect.bottom+2)+'px';
+    list.style.width=Math.max(rect.width,200)+'px';
   }
-}
-
-async function deleteUser(email){
-  if(!confirm(email + ' を削除しますか？')) return;
-  try{
-    await portalApi('portalDeleteUser', {email:email});
-    showToast('削除しました', 'success');
-    loadUsers();
-  }catch(e){
-    showToast('エラー: ' + e.message, 'error');
+  function showList(query){
+    var allItems=listKey===LS_NAME_LISTDEFAULT_NAMESlistKey===LS_SUMMARY_LISTDEFAULT_SUMMARIESDEFAULT_NOTES;
+    var items=loadList(listKey,allItems),q=query.toLowerCase();
+    var filtered=qitems.filter(function(v){var label=typeof v==='object'v.namev;return label.toLowerCase().includes(q);})items;
+    list.innerHTML='';
+    if(!filtered.length){list.classList.remove('show');return;}
+    filtered.forEach(function(v){
+      var item=document.createElement('div');item.className='ac-item';
+      var label=typeof v==='object'v.namev;
+      var unitStr=(typeof v==='object'&&v.unit)' span style=font-size11px;color#aaa;margin-left4px;'+esc(v.unit)+'span''';
+      item.innerHTML='span class=ac-item-text'+esc(label)+unitStr+'span';
+      item.addEventListener('mousedown',function(e){
+        e.preventDefault();input.value=typeof v==='object'v.namev;
+        list.classList.remove('show');
+        if(onSelectCb)onSelectCb(typeof v==='object'v.namev);
+        if(typeof v==='object'&&v.unit){
+          var td=input.closest('td');
+          if(td){var tr=td.closest('tr');if(tr){var unitTd=tr.cells[5];if(unitTd){var unitInput=unitTd.querySelector('input');if(unitInput&&!unitInput.value)unitInput.value=v.unit;}}}
+        }
+      });
+      list.appendChild(item);
+    });
+    var editRow=document.createElement('div');editRow.style.cssText='padding6px 10px;border-top1px solid #f0f0eb;';
+    var editBtn=document.createElement('button');editBtn.style.cssText='font-size11px;color#378ADD;padding3px 8px;border1px solid #b5d4f4;border-radius4px;background#f0f8ff;cursorpointer;';
+    editBtn.textContent='✎ リストを編集';
+    editBtn.addEventListener('mousedown',function(e){e.preventDefault();list.classList.remove('show');openListModal(listKey);});
+    editRow.appendChild(editBtn);list.appendChild(editRow);
+    positionList();list.classList.add('show');
   }
-}
-
-async function changeRank(email, rank){
-  try{
-    await portalApi('portalUpdateUserRank', {email:email, rank:rank});
-    showToast('ランクを変更しました', 'success');
-  }catch(e){
-    showToast('エラー: ' + e.message, 'error');
-  }
-}
-
-async function changeAccess(email, access){
-  try{
-    await portalApi('portalUpdateUserAccess', {email:email, access:access});
-    showToast('アクセスを変更しました', 'success');
-  }catch(e){
-    showToast('エラー: ' + e.message, 'error');
-  }
-}
-
-// ============================================================
-//  ユーザー登録申請
-// ============================================================
-var _approveTargetRow = null;
-
-async function refreshRequestBadge(){
-  try{
-    const data = await portalApi('portalGetPendingCount', {});
-    const badge = document.getElementById('reqBadge');
-    if(data.count > 0){ badge.textContent = data.count; badge.style.display = 'inline-block'; }
-    else { badge.style.display = 'none'; }
-  }catch(e){}
-}
-
-function openRequestModal(){
-  document.getElementById('requestModal').classList.add('open');
-  loadNotifyEmail();
-  loadRequests();
-}
-
-async function loadNotifyEmail(){
-  try{
-    const data = await portalApi('portalGetNotifyEmail', {});
-    document.getElementById('notifyEmailInput').value = data.email || '';
-  }catch(e){}
-}
-
-async function saveNotifyEmail(){
-  const email = document.getElementById('notifyEmailInput').value.trim();
-  if(!email){ showToast('メールアドレスを入力してください', 'error'); return; }
-  showToast('保存中...', 'info');
-  try{
-    await portalApi('portalSetNotifyEmail', {email:email});
-    showToast('通知先を更新しました', 'success');
-  }catch(e){
-    showToast('エラー: ' + e.message, 'error');
-  }
-}
-
-async function loadRequests(){
-  document.getElementById('requestTableWrap').innerHTML = '<div class="empty-msg">読み込み中...</div>';
-  try{
-    const data = await portalApi('portalGetRequests', {});
-    renderRequestTable(data.data);
-  }catch(e){
-    showToast('取得失敗: ' + e.message, 'error');
-  }
-}
-
-function renderRequestTable(requests){
-  const w = document.getElementById('requestTableWrap');
-  if(!requests || !requests.length){
-    w.innerHTML = '<div class="empty-msg">申請はありません</div>';
-    return;
-  }
-  const sourceLabel = {portal:'業務ポータル', estimate:'見積書', juki:'重機日報'};
-  const statusBadge = {
-    '未処理': '<span style="background:#FEF3C7;color:#854F0B;font-size:11px;font-weight:700;padding:3px 8px;border-radius:10px;">未処理</span>',
-    '承認済み': '<span style="background:#e6f4ea;color:#0F6E56;font-size:11px;font-weight:700;padding:3px 8px;border-radius:10px;">承認済み</span>',
-    '却下': '<span style="background:#fce8e6;color:#c0392b;font-size:11px;font-weight:700;padding:3px 8px;border-radius:10px;">却下</span>'
-  };
-  const rows = requests.map(function(r){
-    const actions = r.status==='未処理'
-      ? '<button class="btn-sm" style="background:#1D9E75;margin-right:4px;" onclick="openApproveModal(' + r.row + ',\'' + esc(r.email) + '\',\'' + esc(r.name) + '\')">承認</button>' +
-        '<button class="btn-sm-del" onclick="doReject(' + r.row + ')">却下</button>'
-      : '<span style="font-size:11px;color:#999;">' + esc(r.processedBy) + '</span>';
-    return '<tr>' +
-      '<td>' + esc(r.email) + '</td>' +
-      '<td>' + esc(r.name || '—') + '</td>' +
-      '<td>' + (sourceLabel[r.source] || r.source) + '</td>' +
-      '<td style="font-size:11px;color:#888;">' + esc(r.requestedAt) + '</td>' +
-      '<td>' + (statusBadge[r.status] || r.status) + '</td>' +
-      '<td>' + actions + '</td>' +
-    '</tr>';
-  }).join('');
-  w.innerHTML =
-    '<table class="user-table"><thead><tr>' +
-    '<th>メール</th><th>名前</th><th>申請元</th><th>申請日時</th><th>状態</th><th></th>' +
-    '</tr></thead><tbody>' + rows + '</tbody></table>';
-}
-
-function openApproveModal(row, email, name){
-  _approveTargetRow = row;
-  document.getElementById('approveTargetLabel').textContent = (name || email) + ' さんを承認';
-  document.getElementById('approveRank').value = 'user';
-  renderAccessCheckboxes('approveAccessList', 'portal');
-  document.getElementById('approveModal').classList.add('open');
-}
-
-async function confirmApprove(){
-  const rank = document.getElementById('approveRank').value;
-  const accessList = Array.from(document.querySelectorAll('.approveAccessList-cb:checked')).map(function(cb){return cb.value;});
-  if(accessList.length===0){ showToast('少なくとも1つのアクセス権限を選んでください', 'error'); return; }
-  const access = accessList.join(',');
-  showToast('承認処理中...', 'info');
-  try{
-    await portalApi('portalApproveRequest', {row:_approveTargetRow, rank:rank, access:access});
-    showToast('承認しました', 'success');
-    closeModal('approveModal');
-    loadRequests();
-    refreshRequestBadge();
-  }catch(e){
-    showToast('エラー: ' + e.message, 'error');
-  }
-}
-
-async function doReject(row){
-  if(!confirm('この申請を却下しますか？')) return;
-  showToast('処理中...', 'info');
-  try{
-    await portalApi('portalRejectRequest', {row:row});
-    showToast('却下しました', 'success');
-    loadRequests();
-    refreshRequestBadge();
-  }catch(e){
-    showToast('エラー: ' + e.message, 'error');
-  }
-}
-
-// ============================================================
-//  ユーティリティ
-// ============================================================
-function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
-function showToast(msg, type){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast ' + type + ' show';
-  clearTimeout(t._tid);
-  t._tid = setTimeout(function(){ t.classList.remove('show'); }, 4000);
-}
-
-document.addEventListener('DOMContentLoaded', function(){
-  document.querySelectorAll('.modal-bg').forEach(function(m){
-    m.addEventListener('click', function(e){ if(e.target === this) m.classList.remove('open'); });
+  input.addEventListener('focus',function(){closeAllAc();setTimeout(function(){showList(input.value);},0);activeAc={wrap,list};});
+  input.addEventListener('input',function(){showList(input.value);if(onChangeCb)onChangeCb(input.value);});
+  input.addEventListener('keydown',function(e){
+    var items=list.querySelectorAll('.ac-item'),active=list.querySelector('.ac-item.active');
+    if(e.key==='ArrowDown'){e.preventDefault();var next=activeactive.nextElementSiblingitems[0];if(next&&next.classList.contains('ac-item')){if(active)active.classList.remove('active');next.classList.add('active');}}
+    else if(e.key==='ArrowUp'){e.preventDefault();var prev=activeactive.previousElementSiblingnull;if(prev&&prev.classList.contains('ac-item')){active.classList.remove('active');prev.classList.add('active');}}
+    else if(e.key==='Enter'&&active){
+      e.preventDefault();
+      var nameSpan=active.querySelector('.ac-item-text');
+      var selectedName=nameSpannameSpan.firstChild.textContent.trim()active.textContent.trim();
+      input.value=selectedName;list.classList.remove('show');
+      if(onSelectCb)onSelectCb(selectedName);
+      var allItems2=loadList(listKey,listKey===LS_NAME_LISTDEFAULT_NAMESlistKey===LS_SUMMARY_LISTDEFAULT_SUMMARIESDEFAULT_NOTES);
+      var matched=allItems2.filter(function(v){return typeof v==='object'&&v.name===selectedName;})[0];
+      if(matched&&matched.unit){var td=input.closest('td');if(td){var tr2=td.closest('tr');if(tr2){var unitTd=tr2.cells[5];if(unitTd){var unitInput=unitTd.querySelector('input');if(unitInput&&!unitInput.value)unitInput.value=matched.unit;}}}}
+    }
+    else if(e.key==='Escape'){list.classList.remove('show');}
   });
-});
-</script>
-</body>
-</html>
+  input.addEventListener('blur',function(){setTimeout(function(){list.classList.remove('show');},150);if(onChangeCb)onChangeCb(input.value);});
+  var observer=new MutationObserver(function(){if(!document.body.contains(input)){if(list.parentNode)list.parentNode.removeChild(list);observer.disconnect();}});
+  observer.observe(document.body,{childListtrue,subtreetrue});
+  wrap.appendChild(input);
+  return{wrap,input};
+}
+
+ ============================================================
+  リスト編集モーダル
+ ============================================================
+function openListModal(key){
+  editingListKey=key;
+  var isNameList=(key===LS_NAME_LIST);
+  var def=key===LS_NAME_LISTDEFAULT_NAMESkey===LS_SUMMARY_LISTDEFAULT_SUMMARIESDEFAULT_NOTES;
+  var raw=loadList(key,def);
+  if(isNameList){editingListItems=raw.map(function(v){if(typeof v==='object'&&v!==null)return v;return{namev,unit''};});}
+  else{editingListItems=raw.slice();}
+  document.getElementById('listModalTitle').textContent=key===LS_NAME_LIST'✎ 明細摘要リスト'key===LS_SUMMARY_LIST'✎ 摘要リスト''✎ 備考リスト';
+  document.getElementById('listModalHeader').style.display=isNameList'flex''none';
+  document.getElementById('listAddRowExt').style.display=isNameList'flex''none';
+  document.getElementById('listAddRowSimple').style.display=isNameList'none''flex';
+  document.getElementById('listAddInput').value='';
+  document.getElementById('listAddUnit').value='';
+  document.getElementById('listAddInputSimple').value='';
+  renderListModal();
+  document.getElementById('listModal').classList.add('open');
+}
+function renderListModal(){
+  var c=document.getElementById('listItems');c.innerHTML='';
+  var isNameList=(editingListKey===LS_NAME_LIST);
+  editingListItems.forEach(function(v,i){
+    var row=document.createElement('div');row.className='list-item';row.dataset.idx=i;
+    if(isNameList){
+      var dragH=document.createElement('span');dragH.className='list-item-drag';dragH.innerHTML='&#8942;&#8942;';
+      var nameInp=document.createElement('input');nameInp.type='text';nameInp.value=v.name'';
+      nameInp.style.cssText='flex1;border1px solid #ddd;border-radius5px;padding6px 9px;font-size13px;color#222;';
+      nameInp.addEventListener('input',function(){editingListItems[i].name=this.value;});
+      var unitInp=document.createElement('input');unitInp.type='text';unitInp.className='li-unit';unitInp.value=v.unit'';unitInp.placeholder='単位';
+      unitInp.addEventListener('input',function(){editingListItems[i].unit=this.value;});
+      var del=document.createElement('button');del.className='list-item-del';del.innerHTML='&#10005;';
+      del.onclick=function(){editingListItems.splice(i,1);renderListModal();};
+      row.appendChild(dragH);row.appendChild(nameInp);row.appendChild(unitInp);row.appendChild(del);
+      row.draggable=true;
+      row.addEventListener('dragstart',function(e){_listDragSrc=parseInt(this.dataset.idx);this.classList.add('dragging-row');e.dataTransfer.effectAllowed='move';});
+      row.addEventListener('dragover',function(e){e.preventDefault();e.dataTransfer.dropEffect='move';document.querySelectorAll('#listItems .drag-over-row').forEach(function(el){el.classList.remove('drag-over-row');});this.classList.add('drag-over-row');});
+      row.addEventListener('drop',function(e){e.preventDefault();var ti=parseInt(this.dataset.idx);if(_listDragSrc===null_listDragSrc===ti)return;var moved=editingListItems.splice(_listDragSrc,1)[0];editingListItems.splice(ti,0,moved);renderListModal();});
+      row.addEventListener('dragend',function(){this.classList.remove('dragging-row');document.querySelectorAll('#listItems .drag-over-row').forEach(function(el){el.classList.remove('drag-over-row');});_listDragSrc=null;});
+    }else{
+      var inp=document.createElement('input');inp.type='text';inp.value=v;
+      inp.style.cssText='flex1;border1px solid #ddd;border-radius5px;padding6px 9px;font-size13px;color#222;';
+      inp.addEventListener('input',function(){editingListItems[i]=inp.value;});
+      var del2=document.createElement('button');del2.className='list-item-del';del2.innerHTML='&#10005;';
+      del2.onclick=function(){editingListItems.splice(i,1);renderListModal();};
+      row.appendChild(inp);row.appendChild(del2);
+    }
+    c.appendChild(row);
+  });
+}
+function addListItem(){
+  if(editingListKey===LS_NAME_LIST){
+    var name=document.getElementById('listAddInput').value.trim();if(!name)return;
+    var unit=document.getElementById('listAddUnit').value.trim();
+    editingListItems.push({namename,unitunit});
+    document.getElementById('listAddInput').value='';document.getElementById('listAddUnit').value='';
+  }else{
+    var v=document.getElementById('listAddInput').value.trim();if(!v)return;
+    editingListItems.push(v);document.getElementById('listAddInput').value='';
+  }
+  renderListModal();document.getElementById('listItems').scrollTop=9999;
+}
+function addListItemSimple(){
+  var v=document.getElementById('listAddInputSimple').value.trim();if(!v)return;
+  editingListItems.push(v);document.getElementById('listAddInputSimple').value='';
+  renderListModal();document.getElementById('listItems').scrollTop=9999;
+}
+function saveList(){
+  var isNameList=(editingListKey===LS_NAME_LIST);
+  var toSave=isNameListeditingListItems.filter(function(v){return(v.name'').trim()!=='';})
+                       editingListItems.filter(function(v){return String(v).trim()!=='';});
+  saveListLS(editingListKey,toSave);closeModal('listModal');showToast('リストを保存しました','success');
+  renderRows('ref');renderRows('main');
+}
+
+ ============================================================
+  明細テーブル描画
+ ============================================================
+function rowAmt(row,useB){
+  if(row.type==='horitsu')return useB(parseFloat(row.bDirectAmt)parseFloat(row.directAmt)0)(parseFloat(row.directAmt)0);
+  if(row.type==='discount')return-(parseFloat(row.disc)0);
+  var p=useB(parseFloat(row.bPrice)0)(parseFloat(row.price)0);
+  return(parseFloat(row.qty)0)p-(parseFloat(row.disc)0);
+}
+
+function renderRows(type){
+  var rows=getRows(type);
+  var table=document.querySelector('.estimate-col.'+type+' table.items');
+  table.querySelectorAll('tbody.item-tbody').forEach(function(tb){tb.remove();});
+
+  rows.forEach(function(row,i){
+    var amt=rowAmt(row,false),bAmt=rowAmt(row,true),hidden=row.visible===false;
+    var tbody=document.createElement('tbody');
+    tbody.className='item-tbody';
+    tbody.dataset.idx=i;tbody.dataset.type=type;
+    if(hidden)tbody.classList.add('row-hidden');
+    if(row.type==='horitsu')tbody.classList.add('row-horitsu');
+    if(row.type==='discount')tbody.classList.add('row-discount');
+    tbody.draggable=true;
+    tbody.addEventListener('dragstart',onDragStart);
+    tbody.addEventListener('dragover',onDragOver);
+    tbody.addEventListener('drop',onDrop);
+    tbody.addEventListener('dragend',onDragEnd);
+
+    var tr1=document.createElement('tr');
+    var tr2=document.createElement('tr');
+
+     ドラッグハンドル
+    var tdDh=document.createElement('td');tdDh.className='dh';tdDh.innerHTML='&#8942;';tdDh.rowSpan=2;
+     行番号
+    var tdNo=document.createElement('td');tdNo.className='rn';tdNo.textContent=i+1;tdNo.rowSpan=2;
+     表示非表示
+    var tdVt=document.createElement('td');tdVt.className='vt';tdVt.rowSpan=2;
+    var visBtn=document.createElement('button');visBtn.className='vis-btn '+(hidden'hidden''visible');
+    visBtn.innerHTML=hidden'非表示''表示';
+    visBtn.onclick=function(){toggleVis(type,i);};tdVt.appendChild(visBtn);
+
+     摘要セル
+    var tdName=document.createElement('td');
+    if(row.type==='discount'){
+      var sp=document.createElement('span');sp.style.cssText='padding6px 7px;font-size13px;color#c0392b;font-weight600;displayblock;';sp.textContent='値引き';tdName.appendChild(sp);
+    }else if(row.type==='horitsu'){
+      var sp2=document.createElement('span');sp2.style.cssText='padding6px 7px;font-size13px;color#854F0B;font-weight600;displayblock;';sp2.textContent='法定福利';tdName.appendChild(sp2);
+    }else{
+      var acName=buildAcInput('',row.name,'摘要',LS_NAME_LIST,function(v){rows[i].name=v;},function(v){rows[i].name=v;});
+      acName.input.style.cssText='width100%;backgroundtransparent;border1px solid transparent;border-radius5px;padding6px 7px;font-size13px;color#222;';
+      acName.input.addEventListener('focus',function(){this.style.background='#f6fef9';this.style.borderColor='#1D9E75';});
+      acName.input.addEventListener('blur',function(){this.style.background='transparent';this.style.borderColor='transparent';});
+      tdName.appendChild(acName.wrap);
+    }
+
+     数量
+    var tdQty=document.createElement('td');
+    if(row.type!=='horitsu'&&row.type!=='discount'){
+      var qtyInput=document.createElement('input');qtyInput.type='number';qtyInput.value=row.qty;qtyInput.placeholder='0';qtyInput.style.textAlign='right';
+      qtyInput.oninput=function(){
+        rows[i].qty=this.value;
+        tbody.querySelector('.amt-a').textContent=rowAmt(rows[i],false)'¥'+fmt(Math.abs(rowAmt(rows[i],false)))'';
+        tbody.querySelector('.amt-b').textContent=rowAmt(rows[i],true)'¥'+fmt(Math.abs(rowAmt(rows[i],true)))'';
+        calcTotals(type);
+      };
+      tdQty.appendChild(qtyInput);
+    }
+
+     単位
+    var tdUnit=document.createElement('td');
+    if(row.type==='normal'){
+      var unitInput=document.createElement('input');unitInput.type='text';unitInput.value=row.unit;unitInput.placeholder='単位';
+      unitInput.oninput=function(){rows[i].unit=this.value;};
+      tdUnit.appendChild(unitInput);
+    }
+
+     A単価
+    var tdAPrice=document.createElement('td');tdAPrice.className='bg-a';
+    if(row.type==='normal'){
+      var pi=document.createElement('input');pi.type='number';pi.value=row.price;pi.placeholder='0';pi.style.textAlign='right';
+      pi.oninput=function(){
+        rows[i].price=this.value;
+        tbody.querySelector('.amt-a').textContent=rowAmt(rows[i],false)'¥'+fmt(rowAmt(rows[i],false))'';
+        calcTotals(type);
+      };
+      tdAPrice.appendChild(pi);
+    }else if(row.type==='discount'){
+      var di=document.createElement('input');di.type='number';di.value=row.disc'';di.placeholder='0';di.style.cssText='text-alignright;color#c0392b;';
+      di.oninput=function(){
+        rows[i].disc=this.value;
+        tbody.querySelector('.amt-a').textContent=parseFloat(this.value)'-¥'+fmt(Math.abs(parseFloat(this.value)))'';
+        tbody.querySelector('.amt-b').textContent=parseFloat(this.value)'-¥'+fmt(Math.abs(parseFloat(this.value)))'';
+        calcTotals(type);
+      };
+      tdAPrice.appendChild(di);
+    }
+
+     A金額
+    var tdAAmt=document.createElement('td');tdAAmt.className='amt amt-a bg-a';
+    if(row.type==='horitsu'){
+      var ab=document.createElement('button');ab.className='horitsu-amt-btn';
+      ab.textContent=row.directAmt'¥'+fmt(row.directAmt)'計算式を入力';
+      ab.onclick=function(){openHoritsuModal(type,i);};
+      tdAAmt.appendChild(ab);tdAAmt.style.padding='2px 2px';
+    }else if(row.type==='discount'){
+      tdAAmt.textContent=row.disc'-¥'+fmt(parseFloat(row.disc)0)'';tdAAmt.style.color='#c0392b';
+    }else{
+      tdAAmt.textContent=amt'¥'+fmt(amt)'';
+    }
+
+     削除ボタン
+    var tdDel=document.createElement('td');tdDel.rowSpan=2;
+    var delBtn=document.createElement('button');delBtn.className='del-btn';delBtn.innerHTML='&#10005;';
+    delBtn.onclick=function(){delRow(type,i);};
+    tdDel.appendChild(delBtn);
+
+     備考（tr2, colspan=3）
+    var tdNote=document.createElement('td');tdNote.colSpan=3;tdNote.style.borderLeft='1px dashed #e0e0db';
+    if(row.type!=='discount'){
+      var acNote=buildAcInput('',row.note,'備考',LS_NOTE_LIST,function(v){rows[i].note=v;},function(v){rows[i].note=v;});
+      acNote.input.style.cssText='width100%;backgroundtransparent;border1px solid transparent;border-radius5px;padding6px 7px;font-size13px;color#222;';
+      acNote.input.addEventListener('focus',function(){this.style.background='#f6fef9';this.style.borderColor='#1D9E75';});
+      acNote.input.addEventListener('blur',function(){this.style.background='transparent';this.style.borderColor='transparent';});
+      tdNote.appendChild(acNote.wrap);
+    }
+
+     B単価（tr2）
+    var tdBPrice=document.createElement('td');tdBPrice.classList.add('bg-b');
+    if(row.type==='normal'){
+      var bpi=document.createElement('input');bpi.type='number';
+      bpi.value=row.bPrice!=null&&row.bPrice!==''row.bPrice'';
+      bpi.placeholder='0';
+      bpi.style.cssText='text-alignright;backgroundtransparent;border1px solid transparent;border-radius5px;padding6px 7px;font-size13px;color#185FA5;width100%;';
+      bpi.addEventListener('focus',function(){this.style.background='#EFF6FF';this.style.borderColor='#378ADD';});
+      bpi.addEventListener('blur',function(){this.style.background='transparent';this.style.borderColor='transparent';});
+      bpi.oninput=function(){
+        rows[i].bPrice=this.value;
+        tbody.querySelector('.amt-b').textContent=rowAmt(rows[i],true)'¥'+fmt(rowAmt(rows[i],true))'';
+        calcTotals(type);
+      };
+      tdBPrice.appendChild(bpi);
+    }
+
+     B金額（tr2）
+    var tdBAmt=document.createElement('td');tdBAmt.className='amt amt-b bg-b';tdBAmt.style.color='#185FA5';
+    if(row.type==='horitsu'){
+      var bAmt2=parseFloat(row.bDirectAmt)parseFloat(row.directAmt)0;
+      var bab=document.createElement('button');bab.className='horitsu-amt-btn';bab.style.color='#185FA5';
+      bab.textContent=bAmt2'¥'+fmt(bAmt2)'計算式を入力(B)';
+      bab.onclick=function(){openHoritsuModal(type,i,true);};
+      tdBAmt.appendChild(bab);tdBAmt.style.padding='2px 2px';
+    }else if(row.type==='discount'){
+      tdBAmt.textContent=row.disc'-¥'+fmt(parseFloat(row.disc)0)'';tdBAmt.style.color='#c0392b';
+    }else{
+      tdBAmt.textContent=bAmt'¥'+fmt(bAmt)'';
+    }
+
+    tr1.appendChild(tdDh);tr1.appendChild(tdNo);tr1.appendChild(tdVt);
+    tr1.appendChild(tdName);tr1.appendChild(tdQty);tr1.appendChild(tdUnit);
+    tr1.appendChild(tdAPrice);tr1.appendChild(tdAAmt);tr1.appendChild(tdDel);
+    tr2.appendChild(tdNote);tr2.appendChild(tdBPrice);tr2.appendChild(tdBAmt);
+    tbody.appendChild(tr1);tbody.appendChild(tr2);
+    table.appendChild(tbody);
+  });
+  calcTotals(type);
+}
+
+function toggleVis(type,i){getRows(type)[i].visible=getRows(type)[i].visible===falsetruefalse;renderRows(type);}
+
+function calcTotals(type){
+  var rows=getRows(type);
+  var aSub=0,bSub=0,disc=0;
+  rows.forEach(function(r){
+    if(r.visible===false)return;
+    if(r.type==='discount'){disc+=Math.abs(parseFloat(r.disc)0);}
+    else{aSub+=rowAmt(r,false);bSub+=rowAmt(r,true);}
+  });
+  var aTaxBase=aSub-disc,aTax=Math.floor(aTaxBase0.1),aTotal=aTaxBase+aTax;
+  var bTaxBase=bSub-disc,bTax=Math.floor(bTaxBase0.1),bTotal=bTaxBase+bTax;
+  document.getElementById(type+'Subtotal').textContent='¥'+fmt(aSub);
+  document.getElementById(type+'Tax').textContent='¥'+fmt(aTax);
+  document.getElementById(type+'Total2').textContent='¥'+fmt(aTotal);
+  var bSubEl=document.getElementById(type+'BSubtotal'),bTaxEl=document.getElementById(type+'BTax'),bTotalEl=document.getElementById(type+'BTotal2');
+  if(bSubEl)bSubEl.textContent='¥'+fmt(bSub);
+  if(bTaxEl)bTaxEl.textContent='¥'+fmt(bTax);
+  if(bTotalEl)bTotalEl.textContent='¥'+fmt(bTotal);
+  var discRow=document.getElementById(type+'DiscRow');
+  if(disc0){discRow.style.display='';document.getElementById(type+'DiscTotal').textContent='-¥'+fmt(disc);}
+  else discRow.style.display='none';
+  var bDiscRow=document.getElementById(type+'BDiscRow');
+  if(bDiscRow){
+    if(disc0){bDiscRow.style.display='';var bDiscEl=document.getElementById(type+'BDiscTotal');if(bDiscEl)bDiscEl.textContent='-¥'+fmt(disc);}
+    else bDiscRow.style.display='none';
+  }
+}
+
+function addRow(type){
+  getRows(type).push({name'',qty'',unit'',price'',bPrice'',disc'',note'',visibletrue,type'normal',directAmt''});
+  renderRows(type);
+  var tbodies=document.querySelector('.estimate-col.'+type+' table.items').querySelectorAll('tbody.item-tbody');
+  if(tbodies.length){var inputs=tbodies[tbodies.length-1].querySelectorAll('input');if(inputs.length)inputs[0].focus();}
+}
+function addDiscountRow(type){getRows(type).push({name'値引き',qty'',unit'',price'',bPrice'',disc'',note'',visibletrue,type'discount',directAmt''});renderRows(type);}
+function addHoritsuRow(type){getRows(type).push({name'法定福利',qty'',unit'式',price'',bPrice'',disc'',note'',visibletrue,type'horitsu',directAmt''});renderRows(type);}
+function delRow(type,i){if(getRows(type).length=1)return;getRows(type).splice(i,1);renderRows(type);}
+
+ ============================================================
+  ドラッグ&ドロップ（行並び替え）
+ ============================================================
+function onDragStart(e){
+  dragSrc={typethis.dataset.type,idxparseInt(this.dataset.idx)};
+  this.classList.add('dragging');e.dataTransfer.effectAllowed='move';
+}
+function onDragOver(e){
+  e.preventDefault();e.dataTransfer.dropEffect='move';
+  document.querySelectorAll('.drag-over').forEach(function(el){el.classList.remove('drag-over');});
+  this.classList.add('drag-over');
+}
+function onDrop(e){
+  e.preventDefault();
+  var tt=this.dataset.type,ti=parseInt(this.dataset.idx);
+  if(!dragSrcdragSrc.type!==ttdragSrc.idx===ti)return;
+  var rows=getRows(tt),moved=rows.splice(dragSrc.idx,1)[0];
+  rows.splice(ti,0,moved);renderRows(tt);
+}
+function onDragEnd(){
+  this.classList.remove('dragging');
+  document.querySelectorAll('.drag-over').forEach(function(el){el.classList.remove('drag-over');});
+  dragSrc=null;
+}
+
+ ============================================================
+  参考見積→本見積同期
+ ============================================================
+function onSyncFromRefChange(){
+  if(document.getElementById('syncFromRef').checked)syncQtyToMain();
+}
+function syncQtyToMain(){
+  var srcRows=refRows.filter(function(r){return r.namer.qtyr.unitr.note;});
+  srcRows.forEach(function(src,i){
+    if(imainRows.length){
+      mainRows[i].name=src.namemainRows[i].name;
+      mainRows[i].qty=src.qty;
+      mainRows[i].unit=src.unitmainRows[i].unit;
+      mainRows[i].note=src.notemainRows[i].note;
+      mainRows[i].type=src.type;
+      mainRows[i].visible=src.visible;
+    }else{
+      mainRows.push({namesrc.name,qtysrc.qty,unitsrc.unit,price'',bPrice'',disc'',notesrc.note,visiblesrc.visible,typesrc.type,directAmtsrc.directAmt''});
+    }
+  });
+  if(mainRows.lengthsrcRows.length){
+    mainRows=mainRows.filter(function(r,i){
+      if(isrcRows.length)return true;
+      return(parseFloat(r.price)0)0(parseFloat(r.bPrice)0)0(parseFloat(r.directAmt)0)0;
+    });
+  }
+  renderRows('main');
+  showToast('参考見積から摘要・数量・単位・備考を反映しました','success');
+}
+
+ ============================================================
+  データ収集
+ ============================================================
+function collectData(){
+  function vsAB(rows){
+    var aSub=0,bSub=0,disc=0;
+    rows.forEach(function(r){
+      if(r.visible===false)return;
+      if(r.type==='discount'){disc+=Math.abs(parseFloat(r.disc)0);}
+      else{aSub+=rowAmt(r,false);bSub+=rowAmt(r,true);}
+    });
+    var aTaxBase=aSub-disc,aTax=Math.floor(aTaxBase0.1);
+    var bTaxBase=bSub-disc,bTax=Math.floor(bTaxBase0.1);
+    return{aSubaSub,bSubbSub,discdisc,aTaxBaseaTaxBase,aTaxaTax,aTotalaTaxBase+aTax,bTaxBasebTaxBase,bTaxbTax,bTotalbTaxBase+bTax};
+  }
+  var rv=vsAB(refRows),mv=vsAB(mainRows);
+  var summaryEl=document.getElementById('summaryInput');
+  return{
+    estimateNodocument.getElementById('estimateNo').value,
+    estimateDatedocument.getElementById('estimateDate').value,
+    projectNamedocument.getElementById('projectName').value,
+    projectLocationdocument.getElementById('projectLocation').value,
+    paymentTermsdocument.getElementById('paymentTerms').value,
+    summarysummaryElsummaryEl.value'',
+    clientNamedocument.getElementById('clientName').value,
+    clientContactdocument.getElementById('clientContact').value,
+    clientAddressdocument.getElementById('clientAddress').value,
+    validUntildocument.getElementById('validUntil').value,
+    refNote'',mainNote'',
+    aRefSubtotalrv.aSub,aRefTaxrv.aTax,aRefTotalrv.aTotal,
+    aMainSubtotalmv.aSub,aMainTaxmv.aTax,aMainTotalmv.aTotal,
+    bRefSubtotalrv.bSub,bRefTaxrv.bTax,bRefTotalrv.bTotal,
+    bMainSubtotalmv.bSub,bMainTaxmv.bTax,bMainTotalmv.bTotal,
+    refSubtotalrv.aSub,refTaxrv.aTax,refTotalrv.aTotal,
+    mainSubtotalmv.aSub,mainTaxmv.aTax,mainTotalmv.aTotal,
+    refItemsrefRows,mainItemsmainRows,
+    kikiRecordskikiRecords,
+    kikiTotalMandayskikiRecords.reduce(function(s,r){return s+r.mandays;},0),
+    kikiTotalAmtkikiRecords.reduce(function(s,r){return s+r.amt;},0),
+  };
+}
+
+ ============================================================
+  保存・クリア
+ ============================================================
+function confirmAllClear(){document.getElementById('clearModal').classList.add('open');}
+function execAllClear(){
+  closeModal('clearModal');
+  document.getElementById('loadedBanner').classList.remove('show');
+  document.getElementById('statusBar').style.display='none';
+  _currentEstimateNo='';_currentStatus='draft';
+  document.getElementById('estimateNo').value='';document.getElementById('clientAbbr').value='';
+  document.getElementById('estimateDate').value=new Date().toISOString().split('T')[0];
+  ['projectName','projectLocation','clientName','clientContact','clientAddress','validUntil'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('paymentTerms').value='月々出来高　月末締翌月末現金';
+  var syncEl=document.getElementById('syncFromRef');if(syncEl)syncEl.checked=false;
+  var summaryEl=document.getElementById('summaryInput');if(summaryEl)summaryEl.value='';
+  refRows=DEFAULT_ROWS.map(function(r){return Object.assign({},r);});
+  mainRows=DEFAULT_ROWS.map(function(r){return Object.assign({},r);});
+  renderRows('ref');renderRows('main');
+  kikiRecords=[];renderKikiRecordTable();
+  showToast('クリアしました','success');
+}
+function confirmSave(){
+  if(!document.getElementById('estimateNo').value.trim()){showToast('見積番号を発行してください','error');return;}
+  document.getElementById('saveModal').classList.add('open');
+}
+function doSave(){
+  closeModal('saveModal');
+  var btn=document.getElementById('driveBtn');btn.disabled=true;btn.textContent='保存中...';
+  showToast('保存しています...','info');
+  var data=collectData();
+  var saveMode=document.querySelector('input[name=saveMode]checked').value;
+  var notifyEmail=document.getElementById('notifyEmail').value.trim();
+  data.status=saveMode;
+  if(saveMode==='draft'&&notifyEmail)data.notifyEmail=notifyEmail;
+  if(!hasGasRuntime()){
+    showToast('GAS環境外では保存できません','error');
+    btn.disabled=false;btn.textContent='💾 Google Driveへ保存';
+    return;
+  }
+  google.script.run
+    .withSuccessHandler(function(){
+      showToast(saveMode==='draft''一時保存しました（通知済）''確定保存しました','success');
+      cachedRecords=[];
+       ★修正2 btn参照を正しく復元
+      btn.disabled=false;btn.textContent='💾 Google Driveへ保存';
+      _currentEstimateNo=data.estimateNo;_currentStatus=saveMode;
+      updateStatusBar(saveMode);
+      document.getElementById('loadedBanner').classList.add('show');
+      document.getElementById('loadedMsg').textContent='見積書 '+data.estimateNo+' を保存しました（'+(saveMode==='draft''🟡 参考見積''🟢 本見積（確定）')+')';
+    })
+    .withFailureHandler(function(e){
+      console.error('保存エラー詳細',e);
+      showToast('保存エラー '+e.message,'error');
+       ★修正2 btn参照を正しく復元（失敗時も）
+      btn.disabled=false;btn.textContent='💾 Google Driveへ保存';
+    })
+    .saveEstimateFromClient(data);
+}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+ ============================================================
+  過去データ検索・読み込み
+ ============================================================
+function openDrawer(){document.getElementById('searchModal').classList.add('open');setTimeout(function(){document.getElementById('s_keyword').focus();},100);}
+function execSearch(){
+  if(!hasGasRuntime()){showToast('GAS環境外では検索できません','error');return;}
+  var keyword=document.getElementById('s_keyword').value.trim();
+  var dateFrom=document.getElementById('s_dateFrom').value;
+  var dateTo=document.getElementById('s_dateTo').value;
+  var btn=document.getElementById('searchBtn');btn.disabled=true;btn.textContent='取得中...';
+  document.getElementById('drawerResults').innerHTML='div class=result-loading取得中...div';
+  document.getElementById('resultCount').style.display='none';
+  google.script.run
+    .withSuccessHandler(function(json){
+      btn.disabled=false;btn.textContent='検索';
+      if(json.status!=='ok'){document.getElementById('drawerResults').innerHTML='div class=result-empty取得失敗 '+esc(json.message)+'div';return;}
+      cachedRecords=json.data[];renderResults(cachedRecords);
+    })
+    .withFailureHandler(function(e){btn.disabled=false;btn.textContent='検索';document.getElementById('drawerResults').innerHTML='div class=result-empty取得失敗 '+esc(e.message)+'div';})
+    .searchEstimatesForClient({keywordkeyword,dateFromdateFrom,dateTodateTo,status_searchStatusFilter});
+}
+function renderResults(data){
+  var ce=document.getElementById('resultCount');
+  if(!data.length){document.getElementById('drawerResults').innerHTML='div class=result-empty見つかりませんでしたdiv';ce.style.display='none';return;}
+  ce.textContent=data.length+' 件';ce.style.display='block';
+  document.getElementById('drawerResults').innerHTML=data.map(function(r,i){
+    var total=r.total'¥'+Number(r.total).toLocaleString('ja-JP')'-';
+    var statusBadge=r.status==='draft''span class=status-badge draft🟡 参考見積span''span class=status-badge confirmed🟢 確定済span';
+    return 'div class=result-itemdiv class=result-item-ldiv class=res-no'+esc(r.estimateNo)+' '+statusBadge+'divdiv class=res-client'+(esc(r.clientName)'（未入力）')+'divdiv class=res-project'+(esc(r.projectName)'')+'divbutton class=btn-load onclick=loadRecord('+i+')読み込むbuttondivdiv class=result-item-rdiv class=res-amount'+total+'divdiv class=res-date'+esc(r.estimateDate)+'divdivdiv';
+  }).join('');
+}
+function loadRecord(idx){
+  var rec=cachedRecords[idx];if(!rec){showToast('レコードが見つかりません','error');return;}
+  showToast('読み込み中...','info');
+  if(!hasGasRuntime()){showToast('GAS環境外では読み込みできません','error');return;}
+  google.script.run
+    .withSuccessHandler(function(json){
+      if(json.status!=='ok'){showToast('読み込み失敗 '+json.message,'error');return;}
+      var d=json.data;
+      ['estimateNo','estimateDate','projectName','projectLocation','paymentTerms','clientName','clientContact','clientAddress','validUntil'].forEach(function(id){document.getElementById(id).value=d[id]'';});
+      var summaryEl=document.getElementById('summaryInput');if(summaryEl)summaryEl.value=d.summary'';
+      if(d.estimateNo){var parts=d.estimateNo.split('-');if(parts.length=3){var af=document.getElementById('clientAbbr');if(af)af.value=parts[1]'';}}
+      function normalizeItems(items,fallback){
+        if(!items!Array.isArray(items)!items.length)return fallback.map(function(r){return Object.assign({},r);});
+        return items.map(function(r){
+          var aPrice=r.price!==undefinedr.price'';
+           ★修正3 bPrice空文字判定を修正
+          var bPrice=(r.bPrice!==''&&r.bPrice!=null)r.bPriceaPrice;
+          return{namer.name'',qtyr.qty!==undefinedr.qty'',unitr.unit'',
+                 priceaPrice,bPricebPrice,discr.disc'',noter.note'',
+                 visibler.visible!==false,typer.type'normal',
+                 directAmtr.directAmt'',bDirectAmtr.bDirectAmt''};
+        });
+      }
+      refRows=normalizeItems(d.refItems,DEFAULT_ROWS);
+      mainRows=normalizeItems(d.mainItems,DEFAULT_ROWS);
+      renderRows('ref');renderRows('main');
+      kikiRecords=Array.isArray(d.kikiRecords)d.kikiRecords[];
+      renderKikiRecordTable();
+      _currentEstimateNo=d.estimateNo;
+      updateStatusBar(d.status'confirmed');
+      document.getElementById('loadedMsg').textContent='見積書 '+(d.estimateNo'')+' を読み込みました（'+(d.status==='draft''🟡 参考見積''🟢 本見積（確定済）')+')';
+      document.getElementById('loadedBanner').classList.add('show');
+      closeModal('searchModal');window.scrollTo({top0,behavior'smooth'});showToast('読み込み完了','success');
+    })
+    .withFailureHandler(function(e){showToast('読み込み失敗 '+e.message,'error');})
+    .getDetailForClient({estimateNorec.estimateNo,estimateDaterec.estimateDate});
+}
+
+ ============================================================
+  印刷
+ ============================================================
+function openPrintModal(){setPrintPreset(['ref-a','main-a']);document.getElementById('printModal').classList.add('open');}
+function closePrintModal(){closeModal('printModal');}
+function setPrintPreset(ids){
+  ['ref-a','ref-b','main-a','main-b'].forEach(function(id){document.getElementById('chk-'+id).checked=ids.indexOf(id)!==-1;});
+  updatePrintPreview();
+}
+function updatePrintPreview(){
+  var COL_META={'ref-a'{label'参考見積n(A)',borderColor'#EF9F27',color'#854F0B',bg'#fffdf8'},'ref-b'{label'参考見積n(B)',borderColor'#378ADD',color'#185FA5',bg'#f8fbff'},'main-a'{label'本見積n(A)',borderColor'#10B981',color'#065F46',bg'#f6fdfa'},'main-b'{label'本見積n(B)',borderColor'#378ADD',color'#185FA5',bg'#f8fbff'}};
+  var selected=getSelectedCols();
+  ['ref-a','ref-b','main-a','main-b'].forEach(function(id){
+    var el=document.getElementById('opt-'+id);
+    if(selected.indexOf(id)!==-1){el.style.background='#e8f3fc';el.style.border='2px solid #378ADD';el.style.padding='11px 13px';}
+    else{el.style.background='';el.style.border='1px solid #e0e0db';el.style.padding='12px 14px';}
+  });
+  var layout=document.getElementById('printPreviewLayout');
+  if(!selected.length){
+    layout.innerHTML='div style=flex1;text-aligncenter;color#bbb;font-size12px;padding12px;align-selfcenter;項目を選択してくださいdiv';
+    document.getElementById('printModalOkBtn').disabled=true;
+    document.getElementById('printPreviewError').style.display='block';return;
+  }
+  document.getElementById('printPreviewError').style.display='none';
+  document.getElementById('printModalOkBtn').disabled=false;
+  layout.innerHTML=selected.map(function(id){
+    var m=COL_META[id];
+    return 'div style=flex1;border2px dashed '+m.borderColor+';border-radius6px;padding10px 6px;text-aligncenter;font-size11px;font-weight700;color'+m.color+';background'+m.bg+';white-spacepre-line;'+m.label+'div';
+  }).join('');
+}
+function getSelectedCols(){return['ref-a','ref-b','main-a','main-b'].filter(function(id){return document.getElementById('chk-'+id).checked;});}
+function execPrint(){
+  var cols=getSelectedCols();
+  if(!cols.length){
+    showToast('印刷する項目を選択してください','error');
+    return;
+  }
+  closePrintModal();
+
+  var orientEl=document.querySelector('input[name=printOrientation]checked');
+  var orientation=orientElorientEl.value'auto';
+
+  var d=collectData();
+  html=buildPrintHtml(d,cols,orientation);
+
+  var win=window.open('','_blank');
+  if(!win){
+    showToast('ポップアップがブロックされました。許可してください','error');
+    return;
+  }
+  win.document.write(html);
+  win.document.close();
+
+  win.addEventListener('load',function(){
+    setTimeout(function(){
+      win.print();
+      win.addEventListener('afterprint', function() { win.close(); });
+    }, 400);
+  });    
+}
+
+function buildPrintHtml(d, cols, orientation) {
+  var isPortrait = (orientation === 'portrait')  true  (orientation === 'landscape'  false  (cols.length === 1));
+  var pageRule = isPortrait  '@page{sizeA4 portrait;margin15mm 13mm;}'  '@page{sizeA4 landscape;margin10mm 8mm;}';
+
+  var gridCols, tdFontSize, tdPadding, rowHeight;
+  if (cols.length === 1) {
+    gridCols = '1fr'; tdFontSize = '12px'; tdPadding = '4px 6px'; rowHeight = '1.4';
+  } else if (cols.length === 2) {
+    gridCols = '1fr 1fr'; tdFontSize = '10.5px'; tdPadding = '3px 5px'; rowHeight = '1.3';
+  } else if (cols.length === 3) {
+    gridCols = '1fr 1fr 1fr'; tdFontSize = '9.5px'; tdPadding = '2px 4px'; rowHeight = '1.2';
+  } else {
+     4列表示（すべて選択）時の極小設定
+    gridCols = '1fr 1fr 1fr 1fr'; 
+    tdFontSize = '8.5px';   さらに小さく設定
+    tdPadding = '1px 3px';  左右の余白を極限までカット
+    rowHeight = '1.1';      行間を詰めて横のスペースを捻出
+  }
+
+  var css = [
+    pageRule,
+    '{box-sizingborder-box;margin0;padding0;}',
+    'body{font-familyNoto Sans JP,sans-serif;color#111;line-height' + rowHeight + ';}',
+    'h1{text-aligncenter;font-size18px;font-weight700;letter-spacing5px;margin0 0 8px;}',
+    '.meta{displayflex;justify-contentspace-between;margin-bottom5px;font-size9px;}',
+    '.client-box .name{font-size14px;font-weight700;border-bottom1px solid #111;displayinline-block;padding-bottom1px;}',
+    '.issuer{text-alignright;line-height1.4;}',
+    '.proj-block{margin-bottom5px; border-bottom1px solid #eee; padding-bottom3px;}',
+    '.proj-name{font-size12px;font-weight700;}',
+    '.info-grid{displaygrid;grid-template-columns1fr 1fr;gap1px 10px;margin-bottom5px;font-size9px;color#444;}',
+    '.col-layout{displaygrid;gap8px;align-itemsstart;}',
+    '.col-head{font-size9px;font-weight700;margin-bottom3px;padding2px 5px;border-radius3px;}',
+    '.col-head.ref{background#FEF3C7;color#854F0B;}',
+    '.col-head.main{background#D1FAE5;color#065F46;}',
+    'table{width100%;border-collapsecollapse;table-layoutfixed;margin-bottom5px;}',
+    'th{background#555;color#fff;padding' + tdPadding + ';font-size' + tdFontSize + ';font-weight600;text-alignleft;}',
+    'td{padding' + tdPadding + ';border-bottom0.5px solid #ccc;font-size' + tdFontSize + ';word-breakbreak-all;}',  強制折り返し設定
+    '.note-row td{background#fafafa;color#666;font-size' + (parseFloat(tdFontSize)-0.5) + 'px;}',
+    '.total-row td{font-weight700;border-top1px solid #333;font-size' + (parseFloat(tdFontSize)+0.5) + 'px;}',
+     列幅の比率を「摘要」重視に調整（摘要を45%に拡大）
+    'thnth-child(1), tdnth-child(1){width45%;}', 
+    'thnth-child(2), tdnth-child(2){width12%; text-alignright;}',
+    'thnth-child(3), tdnth-child(3){width10%; text-aligncenter;}',
+    'thnth-child(4), tdnth-child(4){width15%; text-alignright;}',
+    'thnth-child(5), tdnth-child(5){width18%; text-alignright;}',
+    '@media print{body{-webkit-print-color-adjustexact;print-color-adjustexact;}}',
+  ].join('');
+
+  var hd = '!DOCTYPE htmlhtml lang=jaheadmeta charset=UTF-8title見積書 ' + (d.estimateNo  '') + 'titlestyle' + css + 'styleheadbody' +
+    'h1見　積　書h1' +
+    'div class=meta' +
+    'div class=client-box' +
+    'div class=name' + esc(d.clientName  '（未入力）') + '　御中div' +
+    (d.clientContact  'div担当 ' + esc(d.clientContact) + 'div'  '') +
+    (d.clientAddress  'div' + esc(d.clientAddress) + 'div'  '') +
+    'div' +
+    'div class=issuer' +
+    'div見積番号 strong' + esc(d.estimateNo  '') + 'strongdiv' +
+    'div作成日 ' + esc(d.estimateDate  '') + 'div' +
+    'div style=margin-top4px下関市椋野町1丁目21番32号div' +
+    'divstrong山陽チップ工業株式会社strongdiv' +
+    'div代表取締役　中川　幹彦div' +
+    'divTEL 083-231-0323div' +
+    'div' +
+    'div' +
+    'div class=proj-block' +
+    'div class=proj-name工事名：' + esc(d.projectName  '（未入力）') + 'div' +
+    'div class=proj-location工事場所：' + esc(d.projectLocation  '') + 'div' +
+    'div' +
+    'div class=info-grid' +
+    'div支払条件：' + esc(d.paymentTerms  '') + 'div' +
+    'div有効期限：' + esc(d.validUntil  '') + 'div' +
+    (d.summary  'div style=grid-columnspan 2摘要：' + esc(d.summary) + 'div'  '') +
+    'div';
+
+  var COL_DEF = {
+    'ref-a' { items d.refItems, useB false, headClass 'ref', label '参考見積（A金額：自社用）', priceHead 'A単価', amtHead 'A金額', amtStyle 'color#854F0B' },
+    'ref-b' { items d.refItems, useB true, headClass 'ref', label '参考見積（B金額：客先用）', priceHead 'B単価', amtHead 'B金額', amtStyle 'color#185FA5' },
+    'main-a' { items d.mainItems, useB false, headClass 'main', label '本見積（A金額：自社用）', priceHead '単価', amtHead '金額', amtStyle 'color#0F6E56' },
+    'main-b' { items d.mainItems, useB true, headClass 'main', label '本見積（B金額：客先用）', priceHead 'B単価', amtHead 'B金額', amtStyle 'color#185FA5' },
+  };
+
+  function buildColHtml(col) {
+    var def = COL_DEF[col];
+    var items = def.items;
+    var useB = def.useB;
+    var sr = calcSRInner(items, useB);
+    var rows = (items  []).filter(function (it) { return it.visible !== false; }).map(function (it) {
+      var p = useB  (parseFloat(it.bPrice)  0)  (parseFloat(it.price)  0);
+      var a = it.type === 'horitsu'  (useB  (parseFloat(it.bDirectAmt)  parseFloat(it.directAmt)  0)  (parseFloat(it.directAmt)  0)) 
+        it.type === 'discount'  -(parseFloat(it.disc)  0)  (parseFloat(it.qty)  0)  p - (parseFloat(it.disc)  0);
+      var name = it.type === 'horitsu'  '法定福利'  it.type === 'discount'  '値引き'  esc(it.name  '');
+      var cls = it.type === 'discount'  ' class=disc-row'  '';
+      var priceStr = (it.type === 'horitsu'  it.type === 'discount')  ''  (p  '¥' + fmt(p)  '');
+      var amtStr = it.type === 'discount'  (it.disc  '-¥' + fmt(parseFloat(it.disc)  0)  '')  (a  '¥' + fmt(a)  '');
+      
+      var tr1 = 'tr' + cls + 'td' + name + 'tdtd style=text-alignright' + (it.qty  '') + 'tdtd style=text-aligncenter' + esc(it.unit  '') + 'tdtd style=text-alignright' + priceStr + 'tdtd style=text-alignright;' + def.amtStyle + '' + amtStr + 'tdtr';
+      var tr2 = '';
+      if (it.note && it.note.trim()) tr2 = 'tr class=note-rowtd colspan=5 style=padding-left18px;color#555;└ ' + esc(it.note) + 'tdtr';
+      return tr1 + tr2;
+    }).join('');
+    
+    return 'div' +
+      'div class=col-head ' + def.headClass + '' + def.label + 'div' +
+      'tabletheadtrth摘要thth style=text-alignright数量thth style=text-aligncenter単位thth style=text-alignright' + def.priceHead + 'thth style=text-alignright' + def.amtHead + 'thtrthead' +
+      'tbody' + rows +
+      'tr class=sr-row style=border-top1.5px solid #999;td colspan=4 style=text-alignright;color#555;小計tdtd style=text-alignright;' + def.amtStyle + '¥' + fmt(sr.sub) + 'tdtr' +
+      'tr class=sr-rowtd colspan=4 style=text-alignright;color#555;消費税（10%）tdtd style=text-alignright;' + def.amtStyle + '¥' + fmt(sr.tax) + 'tdtr' +
+      'tr class=total-rowtd colspan=4 style=text-alignright;合計（税込）tdtd style=text-alignright;' + def.amtStyle + '¥' + fmt(sr.total) + 'tdtr' +
+      'tbodytable' +
+      'div';
+  }
+
+  var body = 'div class=col-layout style=grid-template-columns' + gridCols + ';' + cols.map(buildColHtml).join('') + 'div';
+  return hd + body + 'bodyhtml';
+}
+
+function calcSRInner(items,useB){
+  var sub=0,disc=0;
+  (items[]).forEach(function(it){
+    if(it.visible===false)return;
+    if(it.type==='discount'){disc+=parseFloat(it.disc)0;return;}
+    var p=useB(parseFloat(it.bPrice)0)(parseFloat(it.price)0);
+    sub+=it.type==='horitsu'(useB(parseFloat(it.bDirectAmt)parseFloat(it.directAmt)0)(parseFloat(it.directAmt)0))(parseFloat(it.qty)0)p;
+  });
+  var taxBase=sub-disc,tax=Math.floor(taxBase0.1);
+  return{subsub,discdisc,taxtax,totaltaxBase+tax};
+}
+
+ ============================================================
+  Excel出力
+ ============================================================
+function exportXlsx(){
+  if(typeof XLSX==='undefined'){showToast('SheetJSライブラリが読み込まれていません','error');return;}
+  var d=collectData(),wb=XLSX.utils.book_new();
+  function n(v){return parseFloat(v)0;}
+  var infoAoa=[['項目','内容'],['見積番号',d.estimateNo''],['作成日',d.estimateDate''],['工事名',d.projectName''],['工事場所',d.projectLocation''],['支払条件',d.paymentTerms''],['摘要',d.summary''],['ステータス',d.status==='draft''参考見積（未確定）''本見積（確定済）'],[],['宛先',d.clientName''],['担当者',d.clientContact''],['住所',d.clientAddress''],['有効期限',d.validUntil'']];
+  var wsInfo=XLSX.utils.aoa_to_sheet(infoAoa);wsInfo['!cols']=[{wch16},{wch44}];
+  XLSX.utils.book_append_sheet(wb,wsInfo,'基本情報');
+  function makeSheet(items,label){
+    var header=['摘要','数量','単位','A単価','A金額','B単価','B金額','備考','表示'];
+    var aoa=[header];
+    (items[]).forEach(function(it){
+      var name=it.type==='horitsu''法定福利'it.type==='discount''値引き'(it.name'');
+      var qty=(it.type==='horitsu'it.type==='discount')''(n(it.qty)'');
+      var unit=(it.type==='horitsu'it.type==='discount')''(it.unit'');
+      var aPrice,aAmt,bPrice,bAmt;
+      if(it.type==='horitsu'){aPrice='';bPrice='';aAmt=n(it.directAmt);bAmt=n(it.bDirectAmt)n(it.directAmt);}
+      else if(it.type==='discount'){aPrice='';bPrice='';aAmt=-n(it.disc);bAmt=-n(it.disc);}
+      else{
+        aPrice=n(it.price)'';
+         ★修正3 bPrice空文字判定
+        bPrice=(it.bPrice!==''&&it.bPrice!=null)(n(it.bPrice)'')(n(it.price)'');
+        aAmt=n(it.qty)n(it.price);
+        bAmt=n(it.qty)((it.bPrice!==''&&it.bPrice!=null)n(it.bPrice)n(it.price));
+      }
+      aoa.push([name,qty,unit,aPrice,aAmt'',bPrice,bAmt'',it.note'',it.visible===false'非表示''表示']);
+    });
+    var aSub=0,bSub=0,disc=0;
+    (items[]).forEach(function(it){
+      if(it.visible===false)return;
+      if(it.type==='discount'){disc+=n(it.disc);return;}
+      if(it.type==='horitsu'){aSub+=n(it.directAmt);bSub+=n(it.bDirectAmt)n(it.directAmt);}
+      else{aSub+=n(it.qty)n(it.price);bSub+=n(it.qty)((it.bPrice!==''&&it.bPrice!=null)n(it.bPrice)n(it.price));}
+    });
+    var aTax=Math.floor((aSub-disc)0.1),bTax=Math.floor((bSub-disc)0.1);
+    aoa.push([]);
+    aoa.push(['','','','小計（A）',aSub-disc,'小計（B）',bSub-disc,'','']);
+    aoa.push(['','','','消費税（A）',aTax,'消費税（B）',bTax,'','']);
+    aoa.push(['','','','合計（A）',aSub-disc+aTax,'合計（B）',bSub-disc+bTax,'','']);
+    var ws=XLSX.utils.aoa_to_sheet(aoa);
+    ws['!cols']=[{wch22},{wch7},{wch6},{wch11},{wch11},{wch11},{wch11},{wch22},{wch6}];
+    XLSX.utils.book_append_sheet(wb,ws,label);
+  }
+  makeSheet(d.refItems,'参考見積明細');makeSheet(d.mainItems,'本見積明細');
+  var filename=(d.estimateNo'見積書')+'_'+(d.estimateDatenew Date().toISOString().split('T')[0])+'.xlsx';
+  XLSX.writeFile(wb,filename);
+  showToast('Excelファイルをダウンロードしました','success');
+}
+
+ ============================================================
+  テンプレート
+ ============================================================
+function loadTemplates(){
+  if(!hasGasRuntime()){renderTplChips();return;}
+  google.script.run.withSuccessHandler(function(j){allTemplates=(j&&j.data)j.data[];renderTplChips();}).withFailureHandler(function(){allTemplates=[];renderTplChips();}).getAllTemplatesForClient();
+}
+function renderTplChips(){
+  var chips=document.getElementById('tplChips');
+  if(!allTemplates!allTemplates.length){chips.innerHTML='span style=font-size12px;color#aaa;テンプレートがありません。保存ボタンから作成できます。span';return;}
+  chips.innerHTML=allTemplates.map(function(t){return'span class=tpl-chip onclick=loadTemplate(''+t.id+'')'+esc(t.name)+'span';}).join('');
+}
+function loadTemplate(id){
+  if(!hasGasRuntime()){showToast('GAS環境外では読み込みできません','error');return;}
+  showToast('読み込み中...','info');
+  google.script.run
+    .withSuccessHandler(function(j){
+      var tpl=j.data;
+      if(tpl.summary){var el=document.getElementById('summaryInput');if(el)el.value=tpl.summary;}
+      if(tpl.paymentTerms){var el2=document.getElementById('paymentTerms');if(el2)el2.value=tpl.paymentTerms;}
+      if(tpl.refItems&&tpl.refItems.length){
+        refRows=tpl.refItems.map(function(r){var ap=r.price!=nullr.price'';return Object.assign({disc'',directAmt'',bPrice(r.bPrice!=null&&r.bPrice!=='')r.bPriceap},r);});
+        renderRows('ref');
+      }
+      if(tpl.mainItems&&tpl.mainItems.length){
+        mainRows=tpl.mainItems.map(function(r){var ap=r.price!=nullr.price'';return Object.assign({disc'',directAmt'',bPrice(r.bPrice!=null&&r.bPrice!=='')r.bPriceap},r);});
+        renderRows('main');
+      }
+      document.querySelectorAll('.tpl-chip').forEach(function(c){c.classList.remove('active');});
+      document.querySelectorAll('.tpl-chip').forEach(function(c){if(c.textContent===tpl.name)c.classList.add('active');});
+      showToast('テンプレート「'+tpl.name+'」を読み込みました','success');
+    })
+    .withFailureHandler(function(e){showToast('読み込み失敗 '+e.message,'error');})
+    .getTemplateDetailForClient(id);
+}
+function openTemplateSaveModal(){
+  document.getElementById('tpl_name').value=document.getElementById('projectName').value'';
+  document.getElementById('tpl_saveType').value='nameUnit';
+  document.getElementById('tpl_note').value='';
+  document.getElementById('templateSaveModal').classList.add('open');
+}
+function execSaveTemplate(){
+  var name=document.getElementById('tpl_name').value.trim();
+  if(!name){showToast('テンプレート名を入力してください','error');return;}
+  var saveType=document.getElementById('tpl_saveType').value,d=collectData();
+  var tpl={namename,saveTypesaveType,notedocument.getElementById('tpl_note').value.trim(),summaryd.summary,paymentTermsd.paymentTerms,refItemsd.refItems,mainItemsd.mainItems};
+  if(!hasGasRuntime()){showToast('GAS環境外では保存できません','error');return;}
+  showToast('保存中...','info');
+  google.script.run.withSuccessHandler(function(){showToast('テンプレートを保存しました','success');closeModal('templateSaveModal');loadTemplates();}).withFailureHandler(function(e){showToast('エラー '+e.message,'error');}).saveTemplateFromClient(tpl);
+}
+function openTemplateManageModal(){document.getElementById('templateManageModal').classList.add('open');renderTplManageList();}
+function renderTplManageList(){
+  var el=document.getElementById('tplManageList');
+  if(!allTemplates!allTemplates.length){el.innerHTML='div style=text-aligncenter;padding20px;color#aaa;font-size13px;テンプレートがありませんdiv';return;}
+  var typeLabel={nameUnit'摘要・単位',all'明細すべて',full'基本情報＋明細'};
+  el.innerHTML='table class=tpl-tabletheadtrthテンプレート名thth保存内容thth最終更新thththtrtheadtbody'+
+    allTemplates.map(function(t){
+      var tag=t.saveType==='nameUnit''span class=tag tag-amber'+(typeLabel[t.saveType]t.saveType)+'span''span class=tag tag-green'+(typeLabel[t.saveType]t.saveType)+'span';
+      return'trtdbutton onclick=loadTemplate(''+t.id+'');closeModal('templateManageModal') style=backgroundnone;bordernone;cursorpointer;font-size13px;color#185FA5;text-decorationunderline;padding0;'+esc(t.name)+'buttontdtd'+tag+'tdtd style=color#aaa;font-size12px;'+esc(t.date)+'tdtdbutton onclick=deleteTpl(''+t.id+'',''+esc(t.name)+'') style=backgroundnone;border1px solid #f5c6cb;border-radius5px;padding3px 9px;font-size11px;color#c0392b;cursorpointer;削除buttontdtr';
+    }).join('')+'tbodytable';
+}
+function deleteTpl(id,name){
+  if(!confirm('「'+name+'」を削除しますか？'))return;
+  if(!hasGasRuntime()){showToast('GAS環境外では削除できません','error');return;}
+  showToast('削除中...','info');
+  google.script.run.withSuccessHandler(function(){showToast('削除しました','success');loadTemplates();renderTplManageList();}).withFailureHandler(function(e){showToast('エラー '+e.message,'error');}).deleteTemplateFromClient(id);
+}
+
+ ============================================================
+  トースト
+ ============================================================
+function showToast(msg,type){
+  var t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type+' show';
+  clearTimeout(t._tid);t._tid=setTimeout(function(){t.classList.remove('show');},4500);
+}
+
+ ============================================================
+  初期化
+ ============================================================
+(function init(){
+  document.getElementById('estimateNo').value='';
+  document.getElementById('estimateDate').value=new Date().toISOString().split('T')[0];
+  var acSum=buildAcInput('summaryInput','','工事概要を入力',LS_SUMMARY_LIST,null,null);
+  acSum.input.style.cssText='width100%;border1px solid #ddd;border-radius6px;padding8px 11px;font-size13px;color#444;background#fff;';
+  acSum.input.addEventListener('focus',function(){this.style.borderColor='#1D9E75';});
+  acSum.input.addEventListener('blur',function(){this.style.borderColor='#ddd';});
+  document.getElementById('summaryAcWrap').appendChild(acSum.wrap);
+  renderRows('ref');renderRows('main');
+  renderNotifyEmailSelect();
+  closeModal('searchModal');
+  loadTemplates();
+  restoreListsFromServer();
+  initRoleUI();
+
+   ACリストのクリックアウト
+  document.addEventListener('click',function(e){if(!e.target.closest('.ac-wrap')&&!e.target.closest('.ac-list'))closeAllAc();});
+
+   ★修正5 スクロール時のACリストリポジション
+  window.addEventListener('scroll',function(e){
+    if(e.target&&e.target.closest&&e.target.closest('.ac-list'))return;
+    document.querySelectorAll('.ac-list.show').forEach(function(list){
+      var linkedInput=list._linkedInput;
+      if(!linkedInput)return;
+      var rect=linkedInput.getBoundingClientRect();
+      list.style.left=rect.left+'px';
+      list.style.top=(rect.bottom+2)+'px';
+      list.style.width=Math.max(rect.width,200)+'px';
+    });
+  },true);
+})();
+script
+body
+html
